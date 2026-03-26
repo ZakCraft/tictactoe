@@ -467,8 +467,8 @@ body::before {
   <div class="screen" id="localSetupScreen">
     <div class="card">
       <div class="card-title">👥 Local Game</div>
-      <div class="field"><label>Player 1 Name (✕)</label><input id="lp1" placeholder="Player 1" maxlength="14"></div>
-      <div class="field"><label>Player 2 Name (○)</label><input id="lp2" placeholder="Player 2" maxlength="14"></div>
+      <div class="field"><label>Player 1 Name (✕)</label><input id="lp1" placeholder="Player 1 (required)" maxlength="14"></div>
+      <div class="field"><label>Player 2 Name (○)</label><input id="lp2" placeholder="Player 2 (required)" maxlength="14"></div>
       <div class="card-title" style="margin-top:8px;">🔲 Grid Size</div>
       <div class="toggle-row" id="localGridToggle">
         <button class="tog on" data-size="3" onclick="setLocalGrid(3,this)">3 × 3</button>
@@ -483,7 +483,7 @@ body::before {
   <div class="screen" id="cpuSetupScreen">
     <div class="card">
       <div class="card-title">🤖 vs Computer</div>
-      <div class="field"><label>Your Name</label><input id="cpuPlayerName" placeholder="Your name" maxlength="14"></div>
+      <div class="field"><label>Your Name</label><input id="cpuPlayerName" placeholder="Your name (required)" maxlength="14"></div>
       <div class="card-title" style="margin-top:8px;">🎯 Difficulty</div>
       <div class="diff-row">
         <button class="diff-btn on" onclick="setDiff('easy',this)">😊 Easy</button>
@@ -683,19 +683,22 @@ function setDiff(d,el){ cpuDiff=d; document.querySelectorAll('.diff-btn').forEac
 
 // ── Start Local ───────────────────────────────────────────────────────────────
 function startLocal(){
+  const n1=document.getElementById('lp1').value.trim();
+  const n2=document.getElementById('lp2').value.trim();
+  if(!n1){ showToast('Please enter Player 1 name!'); document.getElementById('lp1').focus(); return; }
+  if(!n2){ showToast('Please enter Player 2 name!'); document.getElementById('lp2').focus(); return; }
   mode='local'; gridSize=localGrid;
-  nameX=document.getElementById('lp1').value.trim()||'Player X';
-  nameO=document.getElementById('lp2').value.trim()||'Player O';
+  nameX=n1; nameO=n2;
   scores={X:0,O:0,draw:0};
   startGame();
 }
 
 // ── Start CPU ─────────────────────────────────────────────────────────────────
 function startCPU(){
+  const n=document.getElementById('cpuPlayerName').value.trim();
+  if(!n){ showToast('Please enter your name!'); document.getElementById('cpuPlayerName').focus(); return; }
   mode='cpu'; gridSize=cpuGrid;
-  nameX=document.getElementById('cpuPlayerName').value.trim()||'Player X';
-  nameO='🤖 CPU';
-  myMark='X';
+  nameX=n; nameO='🤖 CPU'; myMark='X';
   scores={X:0,O:0,draw:0};
   startGame();
 }
@@ -742,10 +745,12 @@ function renderBoard(){
 // ── Handle Click ──────────────────────────────────────────────────────────────
 function handleClick(i){
   if(board[i]||gameOver) return;
-  if(mode==='online' && !isMyTurn){ showToast("Wait for your turn!"); return; }
   AC.resume();
+  if(mode==='online'){
+    pushOnlineMove(i); // online: write to DB, poll syncs both players
+    return;
+  }
   placeMove(i, curPlayer);
-  if(mode==='online') pushMove(i);
 }
 
 function placeMove(i, player){
@@ -935,242 +940,290 @@ function showToast(msg){
 // ════════════════════════════════════════════════════════════
 // ── ONLINE MULTIPLAYER ──────────────────────────────────────
 // ════════════════════════════════════════════════════════════
+// Design: DB is the single source of truth.
+// Both players poll every 1 s and re-render whatever the DB says.
+// No turn-guards, no fingerprinting — just "what does the DB say? render it."
+// A player's own click is written to DB first, then rendered from the response.
+
+let pollTimer = null;
+
 function showJoinPanel(){
-  const p=document.getElementById('joinPanel');
-  p.style.display=p.style.display==='none'?'block':'none';
+  const p = document.getElementById('joinPanel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
 
 function genCode(){
   return Math.random().toString(36).substring(2,8).toUpperCase();
 }
 
+// ── CREATE ROOM (Player 1) ────────────────────────────────────────────────────
 async function createRoom(){
   if(!initSupabase()){ showOnlineErr(); return; }
-  const myName=document.getElementById('onlineName').value.trim();
+  const myName = document.getElementById('onlineName').value.trim();
   if(!myName){ showToast('Please enter your name first!'); document.getElementById('onlineName').focus(); return; }
-  nameX=myName; nameO='Waiting…'; myMark='X'; gridSize=onlineGrid;
-  const code=genCode();
-  roomId=code;
-  const payload={
-    id:code, board:JSON.stringify(Array(gridSize*gridSize).fill(null)),
-    current_player:'X', player_x:myName, player_o:null,
-    grid_size:gridSize, status:'waiting', winner:null
-  };
-  const {error}=await sb.from('games').insert(payload);
+  myMark = 'X'; gridSize = onlineGrid;
+  const code = genCode();
+  roomId = code;
+  const {error} = await sb.from('games').insert({
+    id: code,
+    board: JSON.stringify(Array(gridSize * gridSize).fill(null)),
+    current_player: 'X',
+    player_x: myName,
+    player_o: null,
+    grid_size: gridSize,
+    status: 'waiting',
+    winner: null
+  });
   if(error){ showOnlineErr(); return; }
-  document.getElementById('displayCode').textContent=code;
-  document.getElementById('badgeCode').textContent=code;
-  document.getElementById('waitingCard').style.display='block';
+  nameX = myName; nameO = '…';
+  document.getElementById('displayCode').textContent = code;
+  document.getElementById('badgeCode').textContent = code;
+  document.getElementById('waitingCard').style.display = 'block';
   document.getElementById('onlineErr').classList.remove('show');
   generateQR(code);
-  subscribeToRoom(code,'X');
+  startPolling(code);
 }
 
+// ── JOIN ROOM (Player 2) ──────────────────────────────────────────────────────
 async function joinRoom(){
   if(!initSupabase()){ showOnlineErr(); return; }
-  const myName=document.getElementById('onlineName').value.trim();
+  const myName = document.getElementById('onlineName').value.trim();
   if(!myName){ showToast('Please enter your name first!'); document.getElementById('onlineName').focus(); return; }
-  const code=document.getElementById('joinCodeInput').value.trim().toUpperCase();
-  if(code.length<4){ showToast('Enter the room code first!'); return; }
-  const {data,error}=await sb.from('games').select('*').eq('id',code).single();
-  if(error||!data){ showToast('Room not found! Check the code.'); return; }
-  if(data.status!=='waiting'){ showToast('This room is already full!'); return; }
-  nameX=data.player_x; nameO=myName; myMark='O';
-  gridSize=data.grid_size; roomId=code;
-  // Push update to DB first so Player 1 polling picks it up immediately
-  const {error:upErr}=await sb.from('games').update({player_o:myName, status:'playing'}).eq('id',code);
+  const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+  if(!code){ showToast('Enter the room code first!'); return; }
+
+  const {data, error} = await sb.from('games').select('*').eq('id', code).single();
+  if(error || !data){ showToast('Room not found! Check the code.'); return; }
+  if(data.status !== 'waiting'){ showToast('This room is already full!'); return; }
+
+  myMark = 'O';
+  gridSize = data.grid_size;
+  roomId = code;
+  nameX = data.player_x;
+  nameO = myName;
+
+  // Write Player 2's name + flip status to 'playing'
+  const {error: upErr} = await sb.from('games')
+    .update({ player_o: myName, status: 'playing' })
+    .eq('id', code);
   if(upErr){ showToast('Could not join. Try again.'); return; }
-  // Subscribe and start game locally
-  subscribeToRoom(code,'O');
-  setupOnlineGame({...data, player_o:myName, status:'playing'});
+
+  // Launch game immediately from known state
+  launchOnlineGame({ ...data, player_o: myName, status: 'playing', current_player: 'X' });
+  startPolling(code);
 }
 
-function setupOnlineGame(data){
-  lastProcessedBoard=null;
-  board=JSON.parse(data.board);
-  gridSize=data.grid_size;
-  curPlayer=data.current_player;
-  isMyTurn=(myMark===curPlayer);
-  nameX=data.player_x; nameO=data.player_o||nameO;
-  document.getElementById('chipXName').textContent=nameX;
-  document.getElementById('chipOName').textContent=nameO;
-  document.getElementById('onlineBadge').style.display='flex';
-  document.getElementById('badgeCode').textContent=roomId;
-  scores={X:0,O:0,draw:0};
+// ── LAUNCH ONLINE GAME ────────────────────────────────────────────────────────
+function launchOnlineGame(data){
+  board      = JSON.parse(data.board);
+  gridSize   = data.grid_size;
+  curPlayer  = data.current_player;
+  nameX      = data.player_x  || nameX;
+  nameO      = data.player_o  || nameO;
+  gameOver   = false;
+  scores     = { X: 0, O: 0, draw: 0 };
+  isMyTurn   = (myMark === curPlayer);
+
+  document.getElementById('chipXName').textContent = nameX;
+  document.getElementById('chipOName').textContent = nameO;
+  document.getElementById('onlineBadge').style.display = 'flex';
+  document.getElementById('badgeCode').textContent = roomId;
+  document.getElementById('waitingCard').style.display = 'none';
   updateScores();
   show('gameScreen');
   renderBoard(); updateStatus(); updateChips();
 }
 
-function subscribeToRoom(code, myRole){
-  if(roomSub){ sb.removeChannel(roomSub); roomSub=null; }
-  if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
-
-  // ── Realtime channel ──────────────────────────────────────
-  roomSub = sb.channel('room-' + code)
-    .on('postgres_changes', {event:'UPDATE', schema:'public', table:'games', filter:'id=eq.'+code}, payload=>{
-      handleRoomUpdate(payload.new, myRole);
-    })
-    .subscribe();
-
-  // ── Polling fallback (every 2 s) ─────────────────────────
-  // Realtime can be unreliable if the table doesn't have it enabled,
-  // or if the event fires before the channel is fully subscribed.
-  // Polling guarantees Player 1 always sees Player 2 join.
-  pollTimer = setInterval(async ()=>{
-    if(!roomId){ clearInterval(pollTimer); pollTimer=null; return; }
-    if(gameOver) return; // game ended, stop polling (cancelOnline handles cleanup)
-    const {data} = await sb.from('games').select('*').eq('id', code).single();
-    if(!data) return;
-    handleRoomUpdate(data, myRole);
-  }, 1500);
+// ── POLLING ───────────────────────────────────────────────────────────────────
+// Every second, fetch the DB row and apply whatever state it holds.
+// This is the only sync mechanism — no Realtime dependency.
+function startPolling(code){
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+  pollTimer = setInterval(() => pollTick(code), 1000);
 }
 
-let pollTimer = null;
+// Tracks the last board string we rendered so we don't flicker on no-change polls
+let lastRenderedBoard = '';
+let lastRenderedStatus = '';
 
-// Track the last DB state we processed so polling doesn't re-apply same update
-let lastProcessedBoard = null;
+async function pollTick(code){
+  if(!roomId) return;
+  const {data, error} = await sb.from('games').select('*').eq('id', code).single();
+  if(error || !data) return;
 
-function handleRoomUpdate(d, myRole){
-  // ── Player 1: waiting for opponent to join ────────────────
-  if(myRole==='X' && document.getElementById('waitingCard').style.display !== 'none'){
-    if(d.status === 'playing' || d.status === 'move' || d.status === 'newround'){
-      nameO = d.player_o;
-      document.getElementById('waitingCard').style.display = 'none';
-      setupOnlineGame(d);
-      // Keep poll running — now used for move sync
-      return;
+  const waitingCard = document.getElementById('waitingCard');
+
+  // ── WAITING: Player 1 waiting for Player 2 ───────────────
+  if(waitingCard && waitingCard.style.display !== 'none'){
+    if(data.status === 'playing' || data.status === 'move'){
+      // Player 2 has joined — launch the game
+      launchOnlineGame(data);
     }
-    // Still waiting, nothing to do
+    // Still waiting, do nothing
     return;
   }
 
-  // ── Opponent's move ───────────────────────────────────────
-  // We are on the game screen. Apply any DB state where it's now OUR turn,
-  // but only if the board actually changed (avoid re-processing same state).
-  if(d.status === 'move'){
-    const incomingBoard = d.board; // JSON string
-    if(incomingBoard === lastProcessedBoard) return; // already applied this update
+  // ── IN GAME: always re-render if anything changed ─────────
+  const boardKey = data.board + '|' + data.current_player + '|' + data.status;
+  if(boardKey === lastRenderedBoard) return; // nothing changed
+  lastRenderedBoard = boardKey;
 
-    // d.current_player = whose turn it is NOW (the one who should move next)
-    // If it's our turn in the DB and we're currently waiting (not our turn locally),
-    // the opponent just moved — apply it.
-    if(d.current_player === myMark && !isMyTurn){
-      lastProcessedBoard = incomingBoard;
-      board = JSON.parse(incomingBoard);
-      curPlayer = myMark;
-      isMyTurn = true;
-      myMark==='X' ? sfxO() : sfxX();
-      renderBoard(); updateStatus(); updateChips();
-      const result = checkWinner();
-      if(result){
-        gameOver = true;
-        if(result.winner){
-          markWinners(result.line); scores[result.winner]++;
-          updateScores(); sfxWin(); confetti(result.winner);
-          setTimeout(()=>showResult(result.winner), 650);
-        } else {
-          scores.draw++; updateScores(); sfxDraw();
-          setTimeout(()=>showResult(null), 350);
+  if(data.status === 'move' || data.status === 'playing'){
+    const prevBoard = board.slice();
+    board      = JSON.parse(data.board);
+    curPlayer  = data.current_player;
+    isMyTurn   = (myMark === curPlayer);
+    gameOver   = false;
+
+    // Play sound only for the opponent's move (a cell that changed and isn't ours)
+    if(myMark !== data.current_player){ // current_player just switched to us = opponent just moved
+      board.forEach((val, i) => {
+        if(val && !prevBoard[i]){
+          val === 'X' ? sfxX() : sfxO();
         }
+      });
+    }
+
+    renderBoard(); updateStatus(); updateChips();
+
+    // Check for a winner using the freshly rendered board
+    const result = checkWinner();
+    if(result && !gameOver){
+      gameOver = true;
+      if(result.winner){
+        markWinners(result.line);
+        scores[result.winner]++;
+        updateScores(); sfxWin(); confetti(result.winner);
+        setTimeout(() => showResult(result.winner), 650);
+      } else {
+        scores.draw++; updateScores(); sfxDraw();
+        setTimeout(() => showResult(null), 350);
       }
     }
   }
 
-  // ── New round ─────────────────────────────────────────────
-  if(d.status === 'newround'){
-    lastProcessedBoard = null;
-    board = JSON.parse(d.board);
-    curPlayer = d.current_player; gameOver = false;
-    isMyTurn = (myMark === curPlayer);
+  if(data.status === 'newround'){
+    board      = JSON.parse(data.board);
+    curPlayer  = data.current_player;
+    isMyTurn   = (myMark === curPlayer);
+    gameOver   = false;
     renderBoard(); updateStatus(); updateChips();
     closeResult();
   }
 }
 
+// ── HANDLE CLICK (online) ─────────────────────────────────────────────────────
+// Override: write move to DB, then let the next poll re-render it for everyone.
+async function pushOnlineMove(cellIndex){
+  if(!sb || !roomId) return;
+  if(!isMyTurn){ showToast("Wait — it's not your turn!"); return; }
+  if(board[cellIndex] || gameOver) return;
 
-async function pushMove(idx){
-  if(!sb||!roomId) return;
-  // At this point, placeMove() has already switched curPlayer to the next player
-  // So current_player in DB = who should move next = the opponent
+  // Apply locally immediately for snappy feel
+  board[cellIndex] = myMark;
+  myMark === 'X' ? sfxX() : sfxO();
+  const nextPlayer = myMark === 'X' ? 'O' : 'X';
+  curPlayer  = nextPlayer;
+  isMyTurn   = false;
+  renderBoard(); updateStatus(); updateChips();
+
+  // Check winner locally right away too
+  const result = checkWinner();
+  const newStatus = result ? (result.winner ? 'move' : 'move') : 'move';
+
+  // Write to DB — poll will pick this up for the opponent
+  lastRenderedBoard = JSON.stringify(board) + '|' + nextPlayer + '|move'; // pre-stamp so our own poll doesn't re-apply
   await sb.from('games').update({
-    board:JSON.stringify(board), current_player:curPlayer, status:'move'
-  }).eq('id',roomId);
+    board: JSON.stringify(board),
+    current_player: nextPlayer,
+    status: 'move'
+  }).eq('id', roomId);
+
+  if(result){
+    gameOver = true;
+    if(result.winner){
+      markWinners(result.line);
+      scores[result.winner]++;
+      updateScores(); sfxWin(); confetti(result.winner);
+      setTimeout(() => showResult(result.winner), 650);
+    } else {
+      scores.draw++; updateScores(); sfxDraw();
+      setTimeout(() => showResult(null), 350);
+    }
+  }
 }
 
+// ── NEW ROUND (online) ────────────────────────────────────────────────────────
 async function pushNewRound(){
-  if(!sb||!roomId) return;
-  const empty=Array(gridSize*gridSize).fill(null);
+  if(!sb || !roomId) return;
+  const empty = Array(gridSize * gridSize).fill(null);
+  lastRenderedBoard = '';
   await sb.from('games').update({
-    board:JSON.stringify(empty), current_player:'X', status:'newround', winner:null
-  }).eq('id',roomId);
-  lastProcessedBoard=null;
-  board=empty; curPlayer='X'; gameOver=false;
-  isMyTurn=(myMark==='X');
+    board: JSON.stringify(empty),
+    current_player: 'X',
+    status: 'newround',
+    winner: null
+  }).eq('id', roomId);
+  board = empty; curPlayer = 'X'; gameOver = false;
+  isMyTurn = (myMark === 'X');
   renderBoard(); updateStatus(); updateChips(); closeResult();
 }
 
+// ── CANCEL / CLEANUP ──────────────────────────────────────────────────────────
 function cancelOnline(){
-  if(roomSub){ sb&&sb.removeChannel(roomSub); roomSub=null; }
-  if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
-  roomId=null;
-  document.getElementById('waitingCard').style.display='none';
-  document.getElementById('joinPanel').style.display='none';
-  document.getElementById('joinCodeInput').value='';
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+  roomId = null;
+  lastRenderedBoard = '';
+  document.getElementById('waitingCard').style.display = 'none';
+  document.getElementById('joinPanel').style.display = 'none';
+  document.getElementById('joinCodeInput').value = '';
 }
 
 function showOnlineErr(){
   document.getElementById('onlineErr').classList.add('show');
 }
 
-// Run on page load
-window.addEventListener('DOMContentLoaded', checkAutoJoin);
-
+// ── SHARE HELPERS ─────────────────────────────────────────────────────────────
 function buildShareURL(code){
-  // Works whether hosted on a server or opened as a local file
   const base = window.location.href.split('?')[0].split('#')[0];
   return `${base}?join=${code}`;
 }
 
 function generateQR(code){
   const url = buildShareURL(code);
-  // Update share link display
   document.getElementById('shareLinkText').textContent = url;
-  // Clear & regenerate QR
   const container = document.getElementById('qrCanvas');
   container.innerHTML = '';
   new QRCode(container, {
-    text: url,
-    width: 160,
-    height: 160,
-    colorDark: '#0d0d14',
-    colorLight: '#ffffff',
+    text: url, width: 160, height: 160,
+    colorDark: '#0d0d14', colorLight: '#ffffff',
     correctLevel: QRCode.CorrectLevel.H
   });
 }
 
 function copyCode(){
-  const code=document.getElementById('displayCode').textContent;
-  navigator.clipboard.writeText(code).then(()=>showToast('Code copied! 📋'));
+  navigator.clipboard.writeText(document.getElementById('displayCode').textContent)
+    .then(() => showToast('Code copied! 📋'));
 }
 
 function copyLink(){
-  const code=document.getElementById('displayCode').textContent;
-  const url=buildShareURL(code);
-  navigator.clipboard.writeText(url).then(()=>showToast('Link copied! 🔗'));
+  const url = buildShareURL(document.getElementById('displayCode').textContent);
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied! 🔗'));
 }
 
-// Auto-join if URL has ?join=CODE
+// ── AUTO-JOIN FROM URL ────────────────────────────────────────────────────────
 function checkAutoJoin(){
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('join');
+  const code = new URLSearchParams(window.location.search).get('join');
   if(code){
     document.getElementById('joinCodeInput').value = code.toUpperCase();
     goOnlineCreate();
     document.getElementById('joinPanel').style.display = 'block';
-    showToast(`Room code ${code} pre-filled! Enter your name & join.`);
+    showToast('Room code pre-filled — enter your name and join!');
   }
 }
+
+window.addEventListener('DOMContentLoaded', checkAutoJoin);
+
 </script>
 </body>
 </html>
