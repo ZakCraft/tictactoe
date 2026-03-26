@@ -774,7 +774,10 @@ function placeMove(i, player){
     if(mode==='cpu' && curPlayer==='O' && !gameOver){
       setTimeout(doCPUMove, cpuDiff==='easy'?600:cpuDiff==='medium'?400:300);
     }
-    if(mode==='online') isMyTurn=!isMyTurn;
+    if(mode==='online'){
+      isMyTurn=false; // opponent's turn now
+      lastProcessedBoard=JSON.stringify(board); // mark current board so poll doesn't echo it back
+    }
   }
 }
 
@@ -983,6 +986,7 @@ async function joinRoom(){
 }
 
 function setupOnlineGame(data){
+  lastProcessedBoard=null;
   board=JSON.parse(data.board);
   gridSize=data.grid_size;
   curPlayer=data.current_player;
@@ -1014,41 +1018,53 @@ function subscribeToRoom(code, myRole){
   // or if the event fires before the channel is fully subscribed.
   // Polling guarantees Player 1 always sees Player 2 join.
   pollTimer = setInterval(async ()=>{
-    if(!roomId) { clearInterval(pollTimer); pollTimer=null; return; }
+    if(!roomId){ clearInterval(pollTimer); pollTimer=null; return; }
+    if(gameOver) return; // game ended, stop polling (cancelOnline handles cleanup)
     const {data} = await sb.from('games').select('*').eq('id', code).single();
     if(!data) return;
     handleRoomUpdate(data, myRole);
-  }, 2000);
+  }, 1500);
 }
 
 let pollTimer = null;
 
+// Track the last DB state we processed so polling doesn't re-apply same update
+let lastProcessedBoard = null;
+
 function handleRoomUpdate(d, myRole){
-  // ── Player 1: opponent just joined ───────────────────────
+  // ── Player 1: waiting for opponent to join ────────────────
   if(myRole==='X' && document.getElementById('waitingCard').style.display !== 'none'){
     if(d.status === 'playing' || d.status === 'move' || d.status === 'newround'){
-      clearInterval(pollTimer); pollTimer=null;
       nameO = d.player_o;
       document.getElementById('waitingCard').style.display = 'none';
       setupOnlineGame(d);
+      // Keep poll running — now used for move sync
       return;
     }
+    // Still waiting, nothing to do
+    return;
   }
 
-  // ── Opponent's move arrived ───────────────────────────────
+  // ── Opponent's move ───────────────────────────────────────
+  // We are on the game screen. Apply any DB state where it's now OUR turn,
+  // but only if the board actually changed (avoid re-processing same state).
   if(d.status === 'move'){
-    // d.current_player = who should move NEXT (already switched when pushed)
-    // So if it's now MY turn, the opponent just moved
+    const incomingBoard = d.board; // JSON string
+    if(incomingBoard === lastProcessedBoard) return; // already applied this update
+
+    // d.current_player = whose turn it is NOW (the one who should move next)
+    // If it's our turn in the DB and we're currently waiting (not our turn locally),
+    // the opponent just moved — apply it.
     if(d.current_player === myMark && !isMyTurn){
-      board = JSON.parse(d.board);
-      curPlayer = d.current_player;
+      lastProcessedBoard = incomingBoard;
+      board = JSON.parse(incomingBoard);
+      curPlayer = myMark;
       isMyTurn = true;
       myMark==='X' ? sfxO() : sfxX();
       renderBoard(); updateStatus(); updateChips();
       const result = checkWinner();
       if(result){
         gameOver = true;
-        clearInterval(pollTimer); pollTimer=null;
         if(result.winner){
           markWinners(result.line); scores[result.winner]++;
           updateScores(); sfxWin(); confetti(result.winner);
@@ -1063,6 +1079,7 @@ function handleRoomUpdate(d, myRole){
 
   // ── New round ─────────────────────────────────────────────
   if(d.status === 'newround'){
+    lastProcessedBoard = null;
     board = JSON.parse(d.board);
     curPlayer = d.current_player; gameOver = false;
     isMyTurn = (myMark === curPlayer);
@@ -1087,6 +1104,7 @@ async function pushNewRound(){
   await sb.from('games').update({
     board:JSON.stringify(empty), current_player:'X', status:'newround', winner:null
   }).eq('id',roomId);
+  lastProcessedBoard=null;
   board=empty; curPlayer='X'; gameOver=false;
   isMyTurn=(myMark==='X');
   renderBoard(); updateStatus(); updateChips(); closeResult();
