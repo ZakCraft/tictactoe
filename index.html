@@ -779,10 +779,7 @@ function placeMove(i, player){
     if(mode==='cpu' && curPlayer==='O' && !gameOver){
       setTimeout(doCPUMove, cpuDiff==='easy'?600:cpuDiff==='medium'?400:300);
     }
-    if(mode==='online'){
-      isMyTurn=false; // opponent's turn now
-      lastProcessedBoard=JSON.stringify(board); // mark current board so poll doesn't echo it back
-    }
+    // online turn management handled entirely by pushOnlineMove + pollTick
   }
 }
 
@@ -1015,6 +1012,7 @@ async function joinRoom(){
 
 // ── LAUNCH ONLINE GAME ────────────────────────────────────────────────────────
 function launchOnlineGame(data){
+  mode       = 'online';
   board      = JSON.parse(data.board);
   gridSize   = data.grid_size;
   curPlayer  = data.current_player;
@@ -1070,34 +1068,36 @@ async function pollTick(code){
 
   if(data.status === 'move' || data.status === 'playing'){
     const prevBoard = board.slice();
-    board      = JSON.parse(data.board);
-    curPlayer  = data.current_player;
-    isMyTurn   = (myMark === curPlayer);
-    gameOver   = false;
+    const newBoard = JSON.parse(data.board);
+    // Only update state if board actually changed (don't stomp our local optimistic render)
+    const boardChanged = JSON.stringify(newBoard) !== JSON.stringify(board);
+    if(boardChanged || curPlayer !== data.current_player){
+      board      = newBoard;
+      curPlayer  = data.current_player;
+      isMyTurn   = (myMark === curPlayer);
 
-    // Play sound only for the opponent's move (a cell that changed and isn't ours)
-    if(myMark !== data.current_player){ // current_player just switched to us = opponent just moved
-      board.forEach((val, i) => {
-        if(val && !prevBoard[i]){
-          val === 'X' ? sfxX() : sfxO();
-        }
+    // Play sound for opponent's move (cell appeared that wasn't there before)
+    if(boardChanged && myMark !== data.current_player){
+      newBoard.forEach((val, i) => {
+        if(val && !prevBoard[i]) val === 'X' ? sfxX() : sfxO();
       });
     }
 
-    renderBoard(); updateStatus(); updateChips();
+      renderBoard(); updateStatus(); updateChips();
 
-    // Check for a winner using the freshly rendered board
-    const result = checkWinner();
-    if(result && !gameOver){
-      gameOver = true;
-      if(result.winner){
-        markWinners(result.line);
-        scores[result.winner]++;
-        updateScores(); sfxWin(); confetti(result.winner);
-        setTimeout(() => showResult(result.winner), 650);
-      } else {
-        scores.draw++; updateScores(); sfxDraw();
-        setTimeout(() => showResult(null), 350);
+      // Check for a winner
+      const result = checkWinner();
+      if(result && !gameOver){
+        gameOver = true;
+        if(result.winner){
+          markWinners(result.line);
+          scores[result.winner]++;
+          updateScores(); sfxWin(); confetti(result.winner);
+          setTimeout(() => showResult(result.winner), 650);
+        } else {
+          scores.draw++; updateScores(); sfxDraw();
+          setTimeout(() => showResult(null), 350);
+        }
       }
     }
   }
@@ -1132,12 +1132,14 @@ async function pushOnlineMove(cellIndex){
   const newStatus = result ? (result.winner ? 'move' : 'move') : 'move';
 
   // Write to DB — poll will pick this up for the opponent
-  lastRenderedBoard = JSON.stringify(board) + '|' + nextPlayer + '|move'; // pre-stamp so our own poll doesn't re-apply
+  const boardJSON = JSON.stringify(board);
   await sb.from('games').update({
-    board: JSON.stringify(board),
+    board: boardJSON,
     current_player: nextPlayer,
     status: 'move'
   }).eq('id', roomId);
+  // Stamp AFTER write so our own poll won't re-apply our own move
+  lastRenderedBoard = boardJSON + '|' + nextPlayer + '|move';
 
   if(result){
     gameOver = true;
