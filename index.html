@@ -504,7 +504,7 @@ body::before {
   <div class="screen" id="onlineScreen">
     <div class="card">
       <div class="card-title">🌐 Online Multiplayer</div>
-      <div class="field"><label>Your Name</label><input id="onlineName" placeholder="Your name" maxlength="14"></div>
+      <div class="field"><label>Your Name</label><input id="onlineName" placeholder="Your name (required)" maxlength="14" required></div>
       <div class="card-title" style="margin-top:4px;">🔲 Grid Size</div>
       <div class="toggle-row" id="onlineGridToggle">
         <button class="tog on" data-size="3" onclick="setOnlineGrid(3,this)">3 × 3</button>
@@ -943,7 +943,8 @@ function genCode(){
 
 async function createRoom(){
   if(!initSupabase()){ showOnlineErr(); return; }
-  const myName=document.getElementById('onlineName').value.trim()||'Player X';
+  const myName=document.getElementById('onlineName').value.trim();
+  if(!myName){ showToast('Please enter your name first!'); document.getElementById('onlineName').focus(); return; }
   nameX=myName; nameO='Waiting…'; myMark='X'; gridSize=onlineGrid;
   const code=genCode();
   roomId=code;
@@ -964,19 +965,20 @@ async function createRoom(){
 
 async function joinRoom(){
   if(!initSupabase()){ showOnlineErr(); return; }
+  const myName=document.getElementById('onlineName').value.trim();
+  if(!myName){ showToast('Please enter your name first!'); document.getElementById('onlineName').focus(); return; }
   const code=document.getElementById('joinCodeInput').value.trim().toUpperCase();
   if(code.length<4){ showToast('Enter the room code first!'); return; }
-  const myName=document.getElementById('onlineName').value.trim()||'Player O';
   const {data,error}=await sb.from('games').select('*').eq('id',code).single();
   if(error||!data){ showToast('Room not found! Check the code.'); return; }
   if(data.status!=='waiting'){ showToast('This room is already full!'); return; }
   nameX=data.player_x; nameO=myName; myMark='O';
   gridSize=data.grid_size; roomId=code;
-  // Subscribe BEFORE pushing update so we never miss events
+  // Push update to DB first so Player 1 polling picks it up immediately
+  const {error:upErr}=await sb.from('games').update({player_o:myName, status:'playing'}).eq('id',code);
+  if(upErr){ showToast('Could not join. Try again.'); return; }
+  // Subscribe and start game locally
   subscribeToRoom(code,'O');
-  // Push update — triggers Player 1's realtime listener
-  await sb.from('games').update({player_o:myName, status:'playing'}).eq('id',code);
-  // Setup game locally with merged fresh data
   setupOnlineGame({...data, player_o:myName, status:'playing'});
 }
 
@@ -998,71 +1000,77 @@ function setupOnlineGame(data){
 
 function subscribeToRoom(code, myRole){
   if(roomSub){ sb.removeChannel(roomSub); roomSub=null; }
+  if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
 
-  roomSub=sb.channel(`game_${code}`)
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'games',filter:`id=eq.${code}`}, payload=>{
-      const d=payload.new;
-
-      // Player 1 sees opponent joined
-      if((d.status==='playing' || d.status==='move' || d.status==='newround') && myRole==='X' && document.getElementById('waitingCard').style.display!=='none'){
-        nameO=d.player_o;
-        document.getElementById('waitingCard').style.display='none';
-        setupOnlineGame(d);
-        return;
-      }
-
-      if(d.status==='playing' && myRole==='X'){
-        nameO=d.player_o;
-        document.getElementById('waitingCard').style.display='none';
-        setupOnlineGame(d);
-      }
-
-      if(d.status==='move'){
-        // Only process opponent's move (our own moves we already applied locally)
-        const incomingPlayer = d.current_player; // this is now whose turn it IS (after the move)
-        if(incomingPlayer === myMark){
-          // The other player just moved, now it's our turn
-          board=JSON.parse(d.board);
-          curPlayer=d.current_player;
-          isMyTurn=true;
-          myMark==='X' ? sfxO() : sfxX();
-          renderBoard(); updateStatus(); updateChips();
-          const result=checkWinner();
-          if(result){
-            gameOver=true;
-            if(result.winner){
-              markWinners(result.line); scores[result.winner]++;
-              updateScores(); sfxWin(); confetti(result.winner);
-              setTimeout(()=>showResult(result.winner),650);
-            } else {
-              scores.draw++; updateScores(); sfxDraw();
-              setTimeout(()=>showResult(null),350);
-            }
-          }
-        }
-      }
-
-      if(d.status==='newround'){
-        board=JSON.parse(d.board);
-        curPlayer=d.current_player; gameOver=false;
-        isMyTurn=(myMark===curPlayer);
-        renderBoard(); updateStatus(); updateChips();
-        closeResult();
-      }
+  // ── Realtime channel ──────────────────────────────────────
+  roomSub = sb.channel('room-' + code)
+    .on('postgres_changes', {event:'UPDATE', schema:'public', table:'games', filter:'id=eq.'+code}, payload=>{
+      handleRoomUpdate(payload.new, myRole);
     })
-    .subscribe(async (status)=>{
-      // Once subscribed, if we're Player 1 still waiting, poll once in case
-      // the realtime event fired before our subscription was ready
-      if(status === 'SUBSCRIBED' && myRole === 'X'){
-        const {data} = await sb.from('games').select('*').eq('id',code).single();
-        if(data && data.status !== 'waiting' && document.getElementById('waitingCard').style.display !== 'none'){
-          nameO = data.player_o;
-          document.getElementById('waitingCard').style.display='none';
-          setupOnlineGame(data);
+    .subscribe();
+
+  // ── Polling fallback (every 2 s) ─────────────────────────
+  // Realtime can be unreliable if the table doesn't have it enabled,
+  // or if the event fires before the channel is fully subscribed.
+  // Polling guarantees Player 1 always sees Player 2 join.
+  pollTimer = setInterval(async ()=>{
+    if(!roomId) { clearInterval(pollTimer); pollTimer=null; return; }
+    const {data} = await sb.from('games').select('*').eq('id', code).single();
+    if(!data) return;
+    handleRoomUpdate(data, myRole);
+  }, 2000);
+}
+
+let pollTimer = null;
+
+function handleRoomUpdate(d, myRole){
+  // ── Player 1: opponent just joined ───────────────────────
+  if(myRole==='X' && document.getElementById('waitingCard').style.display !== 'none'){
+    if(d.status === 'playing' || d.status === 'move' || d.status === 'newround'){
+      clearInterval(pollTimer); pollTimer=null;
+      nameO = d.player_o;
+      document.getElementById('waitingCard').style.display = 'none';
+      setupOnlineGame(d);
+      return;
+    }
+  }
+
+  // ── Opponent's move arrived ───────────────────────────────
+  if(d.status === 'move'){
+    // d.current_player = who should move NEXT (already switched when pushed)
+    // So if it's now MY turn, the opponent just moved
+    if(d.current_player === myMark && !isMyTurn){
+      board = JSON.parse(d.board);
+      curPlayer = d.current_player;
+      isMyTurn = true;
+      myMark==='X' ? sfxO() : sfxX();
+      renderBoard(); updateStatus(); updateChips();
+      const result = checkWinner();
+      if(result){
+        gameOver = true;
+        clearInterval(pollTimer); pollTimer=null;
+        if(result.winner){
+          markWinners(result.line); scores[result.winner]++;
+          updateScores(); sfxWin(); confetti(result.winner);
+          setTimeout(()=>showResult(result.winner), 650);
+        } else {
+          scores.draw++; updateScores(); sfxDraw();
+          setTimeout(()=>showResult(null), 350);
         }
       }
-    });
+    }
+  }
+
+  // ── New round ─────────────────────────────────────────────
+  if(d.status === 'newround'){
+    board = JSON.parse(d.board);
+    curPlayer = d.current_player; gameOver = false;
+    isMyTurn = (myMark === curPlayer);
+    renderBoard(); updateStatus(); updateChips();
+    closeResult();
+  }
 }
+
 
 async function pushMove(idx){
   if(!sb||!roomId) return;
@@ -1086,6 +1094,7 @@ async function pushNewRound(){
 
 function cancelOnline(){
   if(roomSub){ sb&&sb.removeChannel(roomSub); roomSub=null; }
+  if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
   roomId=null;
   document.getElementById('waitingCard').style.display='none';
   document.getElementById('joinPanel').style.display='none';
