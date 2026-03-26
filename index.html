@@ -3,751 +3,1117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Zak &amp; Zayd TTT">
-<meta name="theme-color" content="#0f0e17">
-<meta name="description" content="Zak &amp; Zayd Tic-Tac-Toe — Developed by Zakariya A.">
-<title>Zak &amp; Zayd Tic-Tac-Toe</title>
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAIAEBAAAAAAIABoAwAAJgAAACAgAAAAACAAwgEAAI4DAACJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAMvSURBVHicNc5LaFxVHIDx75x77sw9kzuZRyaZGU2iUUxpKrow4kpSNSml4kJBRLBg66IutCAuhKDgiwpdurGg0J0uXGs0RLpRamIiFoxQqgklPprEZDKZJvO495y/C/Xb/+BTU1OYqyuVL1F6OovyTvugUhCaewH/JwI2EkDRbh040rZWUWmh+dCxU/rqSmVu3OZmHo/z0vYu+HxsnO/f1OSKCWmiCEOhdVsze67N7JkGrcETQXzqfVGZ3ExhZXXOaKWn68bIheER/Wq3TiZyyN1NItXPvgKlAFHE2S6qVCY4cRE7ltfOIZ2v35rWGZRb2j9UtzqOmajM5eYtbvd1cZ2AnhOSBARIvKHXOiBdX6LbatJeW1JOR860xQWnR4v4fJezjZ+5NHCE7s0m+eFDwBLlBK8TslYIpEdp+TXsHzFBc4tusS9Qw7Uhmftkh3xB6OIpbQxQzAmNQ2iNNMAI8Uodu1qHcz/R2lN45whKho8vR6hioSqFWNBacD1NfrjNldcN8UePcHb7OqER3vUT7D53jR/MNrMXS5RLntQJnY7CiMDfDYVSmm4igKU1ssn57etcsPeRs8LM8g1e1Jv0u5DdpsKLopcqAg0GwEagtCcwYC2gIDRCzgp9VsiEggiEBjKhYK1gegov/Hewq/9VKNq+R7w2wDsywczSDTKh8GF8lCxt5vd26CWGvzY9BClBCKpaGZLZl9vkoi4uNWRynjOPwupinq8a+0ggnGSQ+02Fb+76hZVrIVHRcbg8yI+/ewxKQ+8QVapAax/jHC2b8F3HU9CG0MAXzV02H9jiiZvHKMVbBFHKgzLBszu/QT4Tp9zxjIQv/So89qlYW5WNK4HEuZpAXaAmMCwfvGFl8b26zJWflNWjJ+V45V4hqqRG+05w5+SkZMfyqjc4SfRnjPhNaoOe7YbCWmFnx2GzoDSM1hwjVU92T0QbFRii4sLBt5emU6d9e21Rm+YW5ZLGeSFJFWEKSQoIPOyqHN9YJ2om/rN7xvX5jfUFmJoyhbgyXzDGx5k4rQ1V5e1XYqkNDkkcV6VcGpJstibPP1WQF57uF0w1VfmKPz16ZF5EzD/kfnJmK8x+8gAAAABJRU5ErkJggolQTkcNChoKAAAADUlIRFIAAAAgAAAAIAgGAAAAc3p69AAAAYlJREFUeJzFV8uNwjAUHFucWW4RdIByyJEOKIQOtpLtgELSAMqRA0oJKLcsDexe1qzz4s97z1l2JBTiWJ6xM29iG3h4W1dfeAE+H4Nx/+2rySmX5ZD3dYOxGzB2A4uA09dxWkre182MHADupyOLPIT1+/X5oyKs3+DI6BUAtudWTZ66nwjY334f+uR+uxaPjybYbmkDJVuCHJjPPCog5gEt6Mzp/SpGtr9diRd0HgiR+gh6gF6BsipIwbgyTNXt/XRkV4Gk7+ZQzT0Qgj9gaiXcM8lqGW4Ej90wGZhWRygzNocqOy5rBejAlLAkM0QCKEFfN8WBJRYQI9IGlkrAklAJCKWjNjHFAug7j33A/kRArAxLRKjKMGdCVRBxt1s5cKLY9WFHsQS52KZxLYpigBevsdgOhdYKBP7OJfUdz2F7bp8iqDF9v0xeQW4DKQUnMYMeKJm5FEEBpTN34CTmREBuAykBNWEsrAzAOxdKq8CJSG1cdpfWWGB6Wl0SKRPuLq0BflbA4T+O599jdNqwMSbftgAAAABJRU5ErkJggg==">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTEiIGZpbGw9IiMwZjBlMTciLz48bGluZSB4MT0iMjIiIHkxPSI2IiB4Mj0iMjIiIHkyPSI1OCIgc3Ryb2tlPSIjZmZkNzAwIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSI0MiIgeTE9IjYiIHgyPSI0MiIgeTI9IjU4IiBzdHJva2U9IiNmZmQ3MDAiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjYiIHkxPSIyMiIgeDI9IjU4IiB5Mj0iMjIiIHN0cm9rZT0iI2ZmZDcwMCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iNiIgeTE9IjQyIiB4Mj0iNTgiIHkyPSI0MiIgc3Ryb2tlPSIjZmZkNzAwIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSI5IiB5MT0iOSIgeDI9IjE4IiB5Mj0iMTgiIHN0cm9rZT0iI2U2Mzk0NiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIxOCIgeTE9IjkiIHgyPSI5IiB5Mj0iMTgiIHN0cm9rZT0iI2U2Mzk0NiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUyIiBjeT0iMTMiIHI9IjYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFkN2ZlOCIgc3Ryb2tlLXdpZHRoPSIzLjUiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjUyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMxZDdmZTgiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGxpbmUgeDE9IjQ2IiB5MT0iNDYiIHgyPSI1OCIgeTI9IjU4IiBzdHJva2U9IiNlNjM5NDYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iNTgiIHkxPSI0NiIgeDI9IjQ2IiB5Mj0iNTgiIHN0cm9rZT0iI2U2Mzk0NiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIyNiIgeTE9IjI2IiB4Mj0iMzgiIHkyPSIzOCIgc3Ryb2tlPSIjZTYzOTQ2IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIzOCIgeTE9IjI2IiB4Mj0iMjYiIHkyPSIzOCIgc3Ryb2tlPSIjZTYzOTQ2IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==">
-<!-- Apple Touch Icons -->
-<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
-<!-- Android / PWA Icons -->
-<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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">
-<link rel="icon" type="image/png" sizes="512x512" href="data:image/png;base64,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">
-<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-title" content="Tic-Tac-Toe">
+<meta name="theme-color" content="#0d0d14">
+<title>Tic-Tac-Toe</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════════
+     SUPABASE SETUP INSTRUCTIONS
+     ═══════════════════════════════════════════════════════════
+     1. Go to https://supabase.com and create a free project
+     2. In your project dashboard go to Settings → API
+     3. Copy your "Project URL" and "anon public" key
+     4. Paste them below replacing the placeholder values
+     5. In Supabase SQL Editor run this SQL to create the table:
+
+     CREATE TABLE games (
+       id TEXT PRIMARY KEY,
+       board TEXT NOT NULL DEFAULT '{}',
+       current_player TEXT NOT NULL DEFAULT 'X',
+       player_x TEXT,
+       player_o TEXT,
+       grid_size INT NOT NULL DEFAULT 3,
+       status TEXT NOT NULL DEFAULT 'waiting',
+       winner TEXT,
+       updated_at TIMESTAMPTZ DEFAULT NOW()
+     );
+
+     ALTER TABLE games ENABLE ROW LEVEL SECURITY;
+     CREATE POLICY "Allow all" ON games FOR ALL USING (true) WITH CHECK (true);
+
+     ═══════════════════════════════════════════════════════════ -->
+
+<script>
+  // ── PASTE YOUR SUPABASE CREDENTIALS HERE ──────────────────
+  const SUPABASE_URL = 'https://pilxqaxmwnwfrzowoowr.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbHhxYXhtd253ZnJ6b3dvb3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA0MTgsImV4cCI6MjA5MDExNjQxOH0.bV8RSqGqtyhO_95ozVuWsJg31_kMTiEL-r5YBBBlGuE';
+  // ──────────────────────────────────────────────────────────
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
 <style>
-  :root {
-    --x-color: #e63946;
-    --o-color: #1d7fe8;
-    --bg: #0f0e17;
-    --surface: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.12);
-    --gold: #ffd700;
-    --text: #fffffe;
-    --muted: rgba(255,255,255,0.45);
-  }
+:root {
+  --x: #ff4d6d;
+  --o: #4cc9f0;
+  --bg: #0d0d14;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.09);
+  --gold: #f8c537;
+  --text: #f0f0f8;
+  --muted: rgba(240,240,248,0.42);
+  --radius: 16px;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: var(--bg);
-    min-height: 100vh;
-    font-family: 'Nunito', sans-serif;
-    color: var(--text);
-    overflow-x: hidden;
-  }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
 
-  /* ── Animated BG ── */
-  .bg-layer {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background:
-      radial-gradient(ellipse at 20% 30%, rgba(230,57,70,0.15) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 70%, rgba(29,127,232,0.15) 0%, transparent 55%),
-      #0f0e17;
-  }
-  .star { position: fixed; border-radius: 50%; background: white; pointer-events: none; }
+/* bg gradient mesh */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(255,77,109,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 85% 80%, rgba(76,201,240,0.13) 0%, transparent 70%);
+}
 
-  /* ── Layout ── */
-  .wrapper { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 60px; }
+.app {
+  position: relative; z-index: 1;
+  min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 16px 40px;
+  gap: 0;
+}
 
-  /* ── Header ── */
-  header { text-align: center; margin-bottom: 24px; animation: fadeDown 0.7s both; }
-  .game-title {
-    font-family: 'Boogaloo', cursive;
-    font-size: clamp(2rem, 6vw, 3.6rem);
-    line-height: 1;
-    letter-spacing: 2px;
-  }
-  .title-zak { color: var(--x-color); text-shadow: 0 0 30px rgba(230,57,70,0.5); }
-  .title-amp { color: var(--gold); margin: 0 8px; }
-  .title-zayd { color: var(--o-color); text-shadow: 0 0 30px rgba(29,127,232,0.5); }
-  .title-sub { font-size: 1rem; color: var(--muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 4px; }
-  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px);} to { opacity:1; transform:translateY(0);} }
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+  animation: fadeDown .6s both;
+}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--x) 0%, var(--gold) 50%, var(--o) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 28px rgba(255,77,109,0.3));
+}
+.logo-sub {
+  font-size: .78rem; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--muted); margin-top: 5px;
+}
 
-  /* ── Screens ── */
-  .screen { display: none; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 900px; animation: fadeIn 0.4s both; }
-  .screen.active { display: flex; }
-  @keyframes fadeIn { from { opacity:0; transform:scale(0.97);} to { opacity:1; transform:scale(1);} }
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 480px; }
+.screen.active { display: flex; animation: fadeUp .4s both; }
 
-  /* ── Setup Screen ── */
-  .setup-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 32px;
-    width: 100%;
-    max-width: 480px;
-    backdrop-filter: blur(12px);
-  }
-  .setup-card h2 { font-family:'Boogaloo',cursive; font-size:1.8rem; margin-bottom:20px; text-align:center; color: var(--gold); }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-18px);} to{opacity:1;transform:none;} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:none;} }
 
-  .input-group { margin-bottom: 16px; }
-  .input-group label { display:block; font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px; }
-  .input-group label.x-label { color: var(--x-color); }
-  .input-group label.o-label { color: var(--o-color); }
-  .input-group input {
-    width: 100%;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.08);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .input-group input:focus { border-color: rgba(255,255,255,0.4); }
+/* ── CARD ── */
+.card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 26px;
+  backdrop-filter: blur(14px);
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+  letter-spacing: .5px;
+  margin-bottom: 18px;
+  color: var(--gold);
+  display: flex; align-items: center; gap: 8px;
+}
 
-  .grid-picker { margin-bottom: 20px; }
-  .grid-picker label { display:block; font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; color: var(--gold); }
-  .grid-options { display:flex; flex-wrap:wrap; gap:10px; }
-  .grid-btn {
-    padding: 10px 18px;
-    background: rgba(255,255,255,0.07);
-    border: 2px solid var(--border);
-    border-radius: 50px;
-    color: var(--muted);
-    font-family: 'Boogaloo', cursive;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .grid-btn:hover { background: rgba(255,255,255,0.14); color: white; }
-  .grid-btn.selected { background: var(--gold); border-color: var(--gold); color: #0f0e17; font-weight:900; }
+/* ── INPUTS ── */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--muted); margin-bottom: 6px;
+}
+.field input {
+  width: 100%; padding: 12px 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 1rem; font-weight: 500;
+  outline: none; transition: border-color .2s;
+  -webkit-appearance: none;
+}
+.field input:focus { border-color: rgba(255,255,255,0.32); }
 
-  .start-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--x-color), #c1121f);
-    border: none;
-    border-radius: 50px;
-    color: white;
-    font-family: 'Boogaloo', cursive;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 6px 30px rgba(230,57,70,0.4);
-  }
-  .start-btn:hover { transform: scale(1.03); box-shadow: 0 8px 40px rgba(230,57,70,0.6); }
-  .start-btn:active { transform: scale(0.97); }
+/* ── TOGGLE ROW ── */
+.toggle-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.tog {
+  flex: 1; padding: 11px 8px; border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--muted); font-family: 'DM Sans', sans-serif;
+  font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .18s; text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.tog:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.tog.on { border-color: var(--gold); background: rgba(248,197,55,0.12); color: var(--gold); }
 
-  /* ── Game Screen ── */
-  .game-layout { display:flex; gap:24px; width:100%; align-items:flex-start; flex-wrap:wrap; justify-content:center; }
+/* ── BUTTONS ── */
+.btn {
+  width: 100%; padding: 14px;
+  border: none; border-radius: 50px;
+  font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 800;
+  letter-spacing: .5px; cursor: pointer;
+  transition: transform .14s, box-shadow .14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover { transform: scale(1.03); }
+.btn:active { transform: scale(.96); }
+.btn-primary { background: linear-gradient(135deg, var(--x), #c9184a); color: #fff; box-shadow: 0 6px 28px rgba(255,77,109,.35); }
+.btn-blue    { background: linear-gradient(135deg, var(--o), #0077b6); color: #fff; box-shadow: 0 6px 28px rgba(76,201,240,.3); }
+.btn-ghost   { background: rgba(255,255,255,.08); color: var(--text); border: 1.5px solid var(--border); }
+.btn-sm      { padding: 10px 20px; width: auto; font-size: .9rem; }
+.btn-danger  { background: rgba(255,77,109,.12); color: var(--x); border: 1.5px solid rgba(255,77,109,.3); width: auto; }
 
-  /* ── Score Panel ── */
-  .score-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    min-width: 200px;
-    backdrop-filter: blur(12px);
-    flex-shrink: 0;
-  }
-  .score-panel h3 {
-    font-family: 'Boogaloo', cursive;
-    font-size: 1.1rem;
-    color: var(--gold);
-    text-align: center;
-    letter-spacing: 2px;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-  }
-  .score-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    transition: all 0.3s;
-  }
-  .score-row.x-row { background: rgba(230,57,70,0.12); border: 1px solid rgba(230,57,70,0.25); }
-  .score-row.o-row { background: rgba(29,127,232,0.12); border: 1px solid rgba(29,127,232,0.25); }
-  .score-row.x-row.active-turn { background: rgba(230,57,70,0.3); border-color: var(--x-color); transform:scale(1.03); }
-  .score-row.o-row.active-turn { background: rgba(29,127,232,0.3); border-color: var(--o-color); transform:scale(1.03); }
-  .score-name { font-weight: 800; font-size: 0.95rem; }
-  .score-row.x-row .score-name { color: var(--x-color); }
-  .score-row.o-row .score-name { color: var(--o-color); }
-  .score-num { font-family: 'Boogaloo', cursive; font-size: 1.8rem; color: white; }
-  .draw-row { text-align:center; margin-top:8px; color: var(--muted); font-size:0.85rem; font-weight:700; }
-  .draw-num { font-family:'Boogaloo',cursive; font-size:1.2rem; color:white; }
+/* ── MODE CARDS ── */
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.mode-card {
+  padding: 22px 14px; border-radius: 18px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  cursor: pointer; text-align: center;
+  transition: all .2s; backdrop-filter: blur(10px);
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-card:hover { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.09); transform:translateY(-2px); }
+.mode-card .icon { font-size: 2.4rem; margin-bottom: 10px; }
+.mode-card .name { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; }
+.mode-card .desc { font-size:.75rem; color:var(--muted); margin-top:4px; }
+.mode-card.local  { border-color: rgba(248,197,55,.3); }
+.mode-card.online { border-color: rgba(76,201,240,.3); }
+.mode-card.cpu    { border-color: rgba(255,77,109,.3); }
 
-  .music-toggle {
-    width: 100%;
-    margin-top: 14px;
-    padding: 10px;
-    background: rgba(255,215,0,0.1);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 50px;
-    color: var(--gold);
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .music-toggle:hover { background: rgba(255,215,0,0.2); }
+/* ── ROOM CODE DISPLAY ── */
+.room-code-box {
+  background: rgba(248,197,55,.1);
+  border: 1.5px solid rgba(248,197,55,.35);
+  border-radius: 16px; padding: 18px;
+  text-align: center; margin-bottom: 6px;
+}
+.room-code-label { font-size: .72rem; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:6px; }
+.room-code-val {
+  font-family:'Syne',sans-serif; font-size: 2.6rem; font-weight:800;
+  letter-spacing: 10px; color: var(--gold);
+}
+.room-code-hint { font-size:.78rem; color:var(--muted); margin-top:8px; }
+.copy-btn {
+  margin-top:10px; padding:8px 20px; border:1.5px solid rgba(248,197,55,.4);
+  background:rgba(248,197,55,.1); color:var(--gold); border-radius:50px;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
+  cursor:pointer; transition:all .18s; -webkit-tap-highlight-color:transparent;
+}
+.copy-btn:hover { background:rgba(248,197,55,.2); }
 
-  /* ── Status Bar ── */
-  .status-bar {
-    font-family: 'Boogaloo', cursive;
-    font-size: 1.3rem;
-    letter-spacing: 1px;
-    text-align: center;
-    padding: 12px 28px;
-    border-radius: 50px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    min-width: 260px;
-    transition: all 0.3s;
-  }
+/* ── WAITING INDICATOR ── */
+.waiting {
+  display:flex; align-items:center; gap:10px;
+  color:var(--muted); font-size:.9rem; padding:12px 0;
+}
+.dot { width:8px;height:8px;border-radius:50%;background:var(--o);animation:pulse 1.2s infinite; }
+.dot:nth-child(2){animation-delay:.2s;} .dot:nth-child(3){animation-delay:.4s;}
+@keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
 
-  /* ── Board ── */
-  .board-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .board {
-    display: grid;
-    gap: 8px;
-    padding: 16px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-  .cell {
-    background: rgba(255,255,255,0.06);
-    border: 2px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-family: 'Boogaloo', cursive;
-    font-weight: 900;
-    transition: background 0.18s, transform 0.12s, border-color 0.18s;
-    user-select: none;
-    position: relative;
-    overflow: hidden;
-  }
-  .cell:hover:not(.taken) { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.28); transform: scale(1.05); }
-  .cell:active:not(.taken) { transform: scale(0.93); }
-  .cell.taken { cursor: default; }
-  .cell .mark { display:inline-block; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
-  @keyframes popIn { from{transform:scale(0) rotate(-25deg);opacity:0;} to{transform:scale(1) rotate(0);opacity:1;} }
-  .cell.x-cell { color: var(--x-color); }
-  .cell.o-cell { color: var(--o-color); }
-  .cell.winner-cell.x-cell { background:rgba(230,57,70,0.28); border-color:var(--x-color); animation: winBounce 0.5s ease forwards; }
-  .cell.winner-cell.o-cell { background:rgba(29,127,232,0.28); border-color:var(--o-color); animation: winBounce 0.5s ease forwards; }
-  @keyframes winBounce { 0%{transform:scale(1);} 40%{transform:scale(1.18);} 70%{transform:scale(0.95);} 100%{transform:scale(1.08);} }
+/* ── GAME SCREEN ── */
+.game-wrap { width:100%; max-width:520px; display:flex; flex-direction:column; align-items:center; gap:14px; }
 
-  /* ── Board size controls ── */
-  .board-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-  .action-btn {
-    padding: 10px 22px;
-    border-radius: 50px;
-    border: 2px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-family: 'Boogaloo', cursive;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.18s;
-  }
-  .action-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); transform:scale(1.04); }
-  .action-btn.danger { border-color: rgba(230,57,70,0.4); color: var(--x-color); }
-  .action-btn.danger:hover { background: rgba(230,57,70,0.12); }
+.players-row { display:flex; align-items:center; gap:10px; width:100%; }
+.player-chip {
+  flex:1; padding:12px 14px; border-radius:14px;
+  border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  transition:all .3s;
+}
+.player-chip.x-chip { background:rgba(255,77,109,.08); border-color:rgba(255,77,109,.2); }
+.player-chip.o-chip { background:rgba(76,201,240,.08); border-color:rgba(76,201,240,.2); }
+.player-chip.active.x-chip { background:rgba(255,77,109,.22); border-color:var(--x); transform:scale(1.03); }
+.player-chip.active.o-chip { background:rgba(76,201,240,.22); border-color:var(--o); transform:scale(1.03); }
+.chip-name { font-weight:700; font-size:.92rem; }
+.chip-score { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; }
+.x-chip .chip-name, .x-chip .chip-score { color:var(--x); }
+.o-chip .chip-name, .o-chip .chip-score { color:var(--o); }
+.vs-badge { font-family:'Syne',sans-serif; font-weight:800; color:var(--muted); font-size:.9rem; flex-shrink:0; }
 
-  /* ── Modal / Overlay ── */
-  .overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s both;
-  }
-  .overlay.show { display: flex; }
-  .modal {
-    background: linear-gradient(160deg, #1a1a2e, #16213e);
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    padding: 40px 48px;
-    text-align: center;
-    max-width: 480px;
-    width: 90%;
-    animation: modalPop 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-  }
-  @keyframes modalPop { from{transform:scale(0.6) translateY(40px);opacity:0;} to{transform:scale(1) translateY(0);opacity:1;} }
-  .modal .trophy { font-size: 4rem; margin-bottom: 10px; animation: trophySpin 0.8s ease 0.3s both; }
-  @keyframes trophySpin { from{transform:rotate(-20deg) scale(0);} to{transform:rotate(0) scale(1);} }
-  .modal h2 { font-family:'Boogaloo',cursive; font-size:2rem; margin-bottom:8px; }
-  .modal .win-msg { color:var(--muted); font-size:0.95rem; margin-bottom:6px; }
-  .modal .dev-credit {
-    font-family:'Boogaloo',cursive;
-    font-size:1rem;
-    color: var(--gold);
-    letter-spacing:1px;
-    margin: 16px 0 24px;
-    padding: 12px 20px;
-    background: rgba(255,215,0,0.08);
-    border: 1px solid rgba(255,215,0,0.25);
-    border-radius: 12px;
-    line-height: 1.5;
-  }
-  .modal-btns { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-  .modal-btns button {
-    padding: 12px 28px;
-    border-radius: 50px;
-    border: none;
-    font-family: 'Boogaloo', cursive;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: transform 0.15s;
-  }
-  .modal-btns button:hover { transform:scale(1.06); }
-  .modal-btns .btn-play { background:linear-gradient(135deg,var(--x-color),#c1121f); color:white; box-shadow:0 4px 20px rgba(230,57,70,0.4); }
-  .modal-btns .btn-menu { background:rgba(255,255,255,0.1); color:white; border:1px solid var(--border); }
+.status-pill {
+  padding:10px 24px; border-radius:50px;
+  background:var(--card); border:1px solid var(--border);
+  font-family:'Syne',sans-serif; font-weight:800; font-size:1rem;
+  letter-spacing:.5px; transition:all .3s; text-align:center;
+  min-width:200px;
+}
 
-  /* ── Confetti ── */
-  .confetti-wrap { position:fixed; inset:0; pointer-events:none; z-index:99; overflow:hidden; }
-  .cf { position:absolute; top:-20px; border-radius:2px; animation: cfFall var(--d) linear var(--delay) forwards; }
-  @keyframes cfFall { to { transform:translateY(110vh) rotate(var(--rot)); opacity:0; } }
+/* ── BOARD ── */
+.board {
+  display:grid; gap:8px;
+  padding:16px; border-radius:20px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+}
+.cell {
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.09);
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-family:'Syne',sans-serif; font-weight:800;
+  transition:background .18s, transform .12s, border-color .18s;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.cell:hover:not(.taken) { background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.26); transform:scale(1.05); }
+.cell:active:not(.taken) { transform:scale(.93); }
+.cell.taken { cursor:default; }
+.cell .mark { display:inline-block; animation:popIn .32s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes popIn{from{transform:scale(0) rotate(-20deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+.cell.x-cell { color:var(--x); }
+.cell.o-cell { color:var(--o); }
+.cell.win-cell.x-cell { background:rgba(255,77,109,.22); border-color:var(--x); animation:winPop .5s ease forwards; }
+.cell.win-cell.o-cell { background:rgba(76,201,240,.22); border-color:var(--o); animation:winPop .5s ease forwards; }
+@keyframes winPop{0%{transform:scale(1);}45%{transform:scale(1.15);}70%{transform:scale(.96);}100%{transform:scale(1.07);}}
 
-  /* ── Footer ── */
-  footer { position:fixed; bottom:0; left:0; right:0; text-align:center; padding:8px; color:var(--muted); font-size:0.75rem; background:rgba(15,14,23,0.8); backdrop-filter:blur(8px); z-index:10; }
+.game-actions { display:flex; gap:10px; }
 
-  /* ── Mobile Responsive ── */
-  @media (max-width: 600px) {
-    .game-layout { flex-direction: column; align-items: center; gap: 14px; }
-    .score-panel { width: 100%; max-width: 400px; padding: 14px; }
-    .score-panel h3 { font-size: 0.9rem; margin-bottom: 10px; }
-    .score-row { padding: 8px 12px; }
-    .score-num { font-size: 1.4rem; }
-    .board { gap: 5px; padding: 10px; }
-    .board-actions { gap: 8px; }
-    .action-btn { padding: 8px 16px; font-size: 0.9rem; }
-    .status-bar { font-size: 1rem; padding: 10px 18px; }
-    .setup-card { padding: 22px 18px; }
-    h1 { display: none; }
-    header { margin-bottom: 10px; }
-    .game-title { font-size: clamp(1.5rem, 7vw, 2.5rem) !important; }
-    .modal { padding: 28px 22px; }
-    .modal h2 { font-size: 1.5rem; }
-    .modal .trophy { font-size: 2.8rem; }
-    .modal .dev-credit { font-size: 0.85rem; }
-    .modal-btns button { padding: 10px 20px; font-size: 1rem; }
-  }
+/* ── ONLINE BADGE ── */
+.online-badge {
+  display:flex; align-items:center; gap:6px;
+  font-size:.76rem; color:var(--o); font-weight:700;
+  padding:5px 12px; border-radius:50px;
+  background:rgba(76,201,240,.1); border:1px solid rgba(76,201,240,.25);
+}
+.online-dot { width:6px;height:6px;border-radius:50%;background:var(--o);animation:pulse 1.4s infinite; }
 
-  @media (max-width: 380px) {
-    .board { gap: 4px; padding: 8px; }
-    .game-layout { gap: 10px; }
-  }
+/* ── DRAWS ROW ── */
+.draws-row { font-size:.8rem; color:var(--muted); text-align:center; font-weight:700; }
+.draws-num { font-family:'Syne',sans-serif; font-size:1rem; color:var(--text); }
 
-  /* Touch improvements */
-  .cell { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  .grid-btn { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+/* ── RESULT OVERLAY ── */
+.overlay {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,.72); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center;
+}
+.overlay.show { display:flex; animation:fadeUp .35s both; }
+.result-modal {
+  background:linear-gradient(160deg,#131320,#0d1830);
+  border:1px solid var(--border); border-radius:26px;
+  padding:38px 36px; text-align:center;
+  max-width:400px; width:90%;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+  animation:modalPop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalPop{from{transform:scale(.65) translateY(30px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+.result-modal .emoji { font-size:3.8rem; margin-bottom:10px; }
+.result-modal h2 { font-family:'Syne',sans-serif; font-size:1.9rem; font-weight:800; margin-bottom:6px; }
+.result-modal p { color:var(--muted); font-size:.92rem; margin-bottom:18px; line-height:1.5; }
+.result-modal .credit {
+  font-size:.8rem; color:var(--gold);
+  padding:10px 16px; border-radius:10px;
+  background:rgba(248,197,55,.08); border:1px solid rgba(248,197,55,.2);
+  margin-bottom:22px; line-height:1.6;
+}
+.modal-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
 
+/* ── CONFETTI ── */
+.cf-wrap { position:fixed;inset:0;pointer-events:none;z-index:199;overflow:hidden; }
+.cf { position:absolute;top:-12px;border-radius:2px;animation:cfDrop var(--d) linear var(--dl) forwards; }
+@keyframes cfDrop{to{transform:translateY(105vh) rotate(var(--r));opacity:0;}}
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:#1e1e2e; border:1px solid var(--border); border-radius:50px;
+  padding:10px 22px; font-size:.88rem; font-weight:700; color:var(--text);
+  z-index:300; transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap; pointer-events:none;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ── ERROR BOX ── */
+.err { background:rgba(255,77,109,.1); border:1px solid rgba(255,77,109,.3); border-radius:12px; padding:10px 14px; font-size:.85rem; color:var(--x); display:none; }
+.err.show { display:block; }
+
+/* ── DIFFICULTY TABS ── */
+.diff-row { display:flex; gap:6px; margin-bottom:14px; }
+.diff-btn {
+  flex:1; padding:9px 6px; border-radius:10px;
+  border:1.5px solid var(--border); background:rgba(255,255,255,.05);
+  color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
+  cursor:pointer; transition:all .18s; text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.diff-btn.on { border-color:var(--x); background:rgba(255,77,109,.12); color:var(--x); }
+
+/* ── QR Code ── */
+.qr-section {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.qr-label {
+  font-size: .72rem; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--muted); font-weight: 700;
+}
+#qrCanvas {
+  padding: 10px;
+  background: white;
+  border-radius: 14px;
+  display: block;
+  box-shadow: 0 4px 24px rgba(76,201,240,0.25);
+}
+.share-link-box {
+  width: 100%;
+  background: rgba(76,201,240,.07);
+  border: 1.5px solid rgba(76,201,240,.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.share-link-text {
+  flex: 1;
+  font-size: .78rem;
+  color: var(--o);
+  font-weight: 700;
+  word-break: break-all;
+  font-family: monospace;
+}
+.share-link-copy {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  background: rgba(76,201,240,.15);
+  border: 1px solid rgba(76,201,240,.35);
+  border-radius: 8px;
+  color: var(--o);
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .18s;
+}
+.share-link-copy:hover { background: rgba(76,201,240,.28); }
+.share-divider {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; color: var(--muted); font-size: .75rem; font-weight: 700;
+}
+.share-divider::before, .share-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .mode-grid{grid-template-columns:1fr;}
+  .players-row{gap:6px;}
+  .card{padding:20px 16px;}
+  .result-modal{padding:28px 20px;}
+  .result-modal h2{font-size:1.5rem;}
+}
 </style>
 </head>
 <body>
+<div class="app">
 
-<div class="bg-layer"></div>
-<div class="confetti-wrap" id="confettiWrap"></div>
-
-<div class="wrapper">
-  <header>
-    <div class="game-title">
-      <span class="title-zak">Zak</span>
-      <span class="title-amp">&amp;</span>
-      <span class="title-zayd">Zayd</span>
-    </div>
-    <div class="game-title" style="font-size:clamp(1.2rem,3.5vw,2rem);">
-      <span style="color:var(--gold);font-family:'Boogaloo',cursive;letter-spacing:3px;">TIC-TAC-TOE</span>
-    </div>
-    <div class="title-sub">The Ultimate Challenge</div>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">Tic‑Tac‑Toe</div>
+    <div class="logo-sub">Developed by Zakariya A.</div>
   </header>
 
-  <!-- ── SETUP SCREEN ── -->
-  <div class="screen active" id="setupScreen">
-    <div class="setup-card">
-      <h2>🎮 Game Setup</h2>
-
-      <div class="input-group">
-        <label class="x-label">✕ Player 1 Name</label>
-        <input type="text" id="nameX" placeholder="Enter name..." maxlength="16">
+  <!-- ══ HOME SCREEN ══ -->
+  <div class="screen active" id="homeScreen">
+    <div class="field" style="width:100%">
+      <label>Your Name</label>
+      <input type="text" id="playerNameInput" placeholder="Enter your name…" maxlength="16">
+    </div>
+    <div class="mode-grid">
+      <div class="mode-card local" onclick="goLocalSetup()">
+        <div class="icon">👥</div>
+        <div class="name">Local</div>
+        <div class="desc">2 players, same device</div>
       </div>
-      <div class="input-group">
-        <label class="o-label">○ Player 2 Name</label>
-        <input type="text" id="nameO" placeholder="Enter name..." maxlength="16">
+      <div class="mode-card cpu" onclick="goCPUSetup()">
+        <div class="icon">🤖</div>
+        <div class="name">vs CPU</div>
+        <div class="desc">Play against AI</div>
       </div>
-
-      <div class="grid-picker">
-        <label>🔲 Choose Grid Size</label>
-        <div class="grid-options">
-          <button class="grid-btn selected" data-size="3">3×3 (9 cells)</button>
-          <button class="grid-btn" data-size="4">4×4 (16 cells)</button>
-          <button class="grid-btn" data-size="5">5×5 (25 cells)</button>
-          <button class="grid-btn" data-size="6">6×6 (36 cells)</button>
-        </div>
+      <div class="mode-card online" onclick="goOnlineCreate()" style="grid-column:1/-1;">
+        <div class="icon">🌐</div>
+        <div class="name">Online Multiplayer</div>
+        <div class="desc">Create or join a game with a friend</div>
       </div>
-
-      <button class="start-btn" id="startBtn">🚀 START GAME</button>
     </div>
   </div>
 
-  <!-- ── GAME SCREEN ── -->
+  <!-- ══ LOCAL SETUP ══ -->
+  <div class="screen" id="localSetupScreen">
+    <div class="card">
+      <div class="card-title">👥 Local Game</div>
+      <div class="field"><label>Player 1 Name (✕)</label><input id="lp1" placeholder="Player 1" maxlength="14"></div>
+      <div class="field"><label>Player 2 Name (○)</label><input id="lp2" placeholder="Player 2" maxlength="14"></div>
+      <div class="card-title" style="margin-top:8px;">🔲 Grid Size</div>
+      <div class="toggle-row" id="localGridToggle">
+        <button class="tog on" data-size="3" onclick="setLocalGrid(3,this)">3 × 3</button>
+        <button class="tog"    data-size="4" onclick="setLocalGrid(4,this)">4 × 4</button>
+      </div>
+      <button class="btn btn-primary" onclick="startLocal()">▶ Start Game</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="goHome()">← Back</button>
+  </div>
+
+  <!-- ══ CPU SETUP ══ -->
+  <div class="screen" id="cpuSetupScreen">
+    <div class="card">
+      <div class="card-title">🤖 vs Computer</div>
+      <div class="field"><label>Your Name</label><input id="cpuPlayerName" placeholder="Your name" maxlength="14"></div>
+      <div class="card-title" style="margin-top:8px;">🎯 Difficulty</div>
+      <div class="diff-row">
+        <button class="diff-btn on" onclick="setDiff('easy',this)">😊 Easy</button>
+        <button class="diff-btn"    onclick="setDiff('medium',this)">🧠 Medium</button>
+        <button class="diff-btn"    onclick="setDiff('hard',this)">😈 Hard</button>
+      </div>
+      <div class="card-title" style="margin-top:8px;">🔲 Grid Size</div>
+      <div class="toggle-row">
+        <button class="tog on" data-size="3" onclick="setCPUGrid(3,this)">3 × 3</button>
+        <button class="tog"    data-size="4" onclick="setCPUGrid(4,this)">4 × 4</button>
+      </div>
+      <button class="btn btn-primary" onclick="startCPU()">▶ Start Game</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="goHome()">← Back</button>
+  </div>
+
+  <!-- ══ ONLINE SCREEN ══ -->
+  <div class="screen" id="onlineScreen">
+    <div class="card">
+      <div class="card-title">🌐 Online Multiplayer</div>
+      <div class="field"><label>Your Name</label><input id="onlineName" placeholder="Your name" maxlength="14"></div>
+      <div class="card-title" style="margin-top:4px;">🔲 Grid Size</div>
+      <div class="toggle-row" id="onlineGridToggle">
+        <button class="tog on" data-size="3" onclick="setOnlineGrid(3,this)">3 × 3</button>
+        <button class="tog"    data-size="4" onclick="setOnlineGrid(4,this)">4 × 4</button>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <button class="btn btn-primary" style="flex:1" onclick="createRoom()">➕ Create Room</button>
+        <button class="btn btn-blue"    style="flex:1" onclick="showJoinPanel()">🔗 Join Room</button>
+      </div>
+      <div id="joinPanel" style="display:none;margin-top:4px;">
+        <div class="field"><label>Room Code</label><input id="joinCodeInput" placeholder="Enter 6-digit code…" maxlength="6" style="letter-spacing:4px;font-size:1.2rem;text-align:center;text-transform:uppercase;"></div>
+        <button class="btn btn-blue" onclick="joinRoom()">Join Game</button>
+      </div>
+      <div class="err" id="onlineErr">Could not connect. Check your Supabase credentials.</div>
+    </div>
+
+    <!-- Waiting for opponent -->
+    <div class="card" id="waitingCard" style="display:none;">
+      <div class="room-code-box">
+        <div class="room-code-label">Share this code</div>
+        <div class="room-code-val" id="displayCode">------</div>
+        <div class="room-code-hint">Give this code or scan the QR to join!</div>
+        <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
+      </div>
+
+      <div class="share-divider">or share link</div>
+
+      <div class="share-link-box">
+        <span class="share-link-text" id="shareLinkText">—</span>
+        <button class="share-link-copy" onclick="copyLink()">🔗 Copy</button>
+      </div>
+
+      <div class="qr-section">
+        <div class="qr-label">📱 Scan to join instantly</div>
+        <div id="qrCanvas"></div>
+      </div>
+
+      <div class="waiting" style="margin-top:14px;">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <span>Waiting for opponent to join…</span>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost btn-sm" onclick="goHome();cancelOnline()">← Back</button>
+  </div>
+
+  <!-- ══ GAME SCREEN ══ -->
   <div class="screen" id="gameScreen">
-    <div class="status-bar" id="statusBar">Player X's turn</div>
-    <div class="game-layout">
-      <div class="score-panel">
-        <h3>🏆 Scoreboard</h3>
-        <div class="score-row x-row active-turn" id="scoreRowX">
-          <span class="score-name" id="scoreNameX">Player X</span>
-          <span class="score-num" id="scoreNumX">0</span>
+    <div class="game-wrap">
+      <div class="players-row">
+        <div class="player-chip x-chip active" id="chipX">
+          <span class="chip-name" id="chipXName">Player X</span>
+          <span class="chip-score" id="chipXScore">0</span>
         </div>
-        <div class="score-row o-row" id="scoreRowO">
-          <span class="score-name" id="scoreNameO">Player O</span>
-          <span class="score-num" id="scoreNumO">0</span>
+        <div class="vs-badge">VS</div>
+        <div class="player-chip o-chip" id="chipO">
+          <span class="chip-name" id="chipOName">Player O</span>
+          <span class="chip-score" id="chipOScore">0</span>
         </div>
-        <div class="draw-row">Draws: <span class="draw-num" id="drawNum">0</span></div>
-        <button class="music-toggle" id="musicToggle">🎵 Music: ON</button>
       </div>
 
-      <div class="board-wrap">
-        <div class="board" id="board"></div>
-        <div class="board-actions">
-          <button class="action-btn" id="newRoundBtn">🔄 New Round</button>
-          <button class="action-btn danger" id="backMenuBtn">🏠 Main Menu</button>
-        </div>
+      <div id="onlineBadge" style="display:none;">
+        <div class="online-badge"><div class="online-dot"></div>Online · Room: <span id="badgeCode"></span></div>
+      </div>
+
+      <div class="status-pill" id="statusPill">X's turn</div>
+      <div class="draws-row">Draws: <span class="draws-num" id="drawsNum">0</span></div>
+
+      <div class="board" id="board"></div>
+
+      <div class="game-actions">
+        <button class="btn btn-ghost btn-sm" onclick="newRound()">🔄 New Round</button>
+        <button class="btn btn-danger btn-sm" onclick="goHome();cancelOnline()">🏠 Menu</button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ── WIN / DRAW MODAL ── -->
+</div><!-- /app -->
+
+<!-- RESULT OVERLAY -->
 <div class="overlay" id="resultOverlay">
-  <div class="modal">
-    <div class="trophy" id="modalTrophy">🏆</div>
-    <h2 id="modalTitle">Winner!</h2>
-    <p class="win-msg" id="modalMsg"></p>
-    <div class="dev-credit">
+  <div class="result-modal">
+    <div class="emoji" id="resEmoji">🏆</div>
+    <h2 id="resTitle">Winner!</h2>
+    <p id="resMsg"></p>
+    <div class="credit">
       🎉 Congratulations!! You just finished playing<br>
-      <strong>Zak &amp; Zayd's Tic-Tac-Toe</strong><br>
-      — Developed by Zakariya A.
+      <strong>Tic-Tac-Toe</strong> — Developed by Zakariya A.
     </div>
     <div class="modal-btns">
-      <button class="btn-play" id="modalPlayAgain">▶ Play Again</button>
-      <button class="btn-menu" id="modalMenu">🏠 Menu</button>
+      <button class="btn btn-primary btn-sm" onclick="closeResult();newRound()">▶ Play Again</button>
+      <button class="btn btn-ghost btn-sm"   onclick="closeResult();goHome();cancelOnline()">🏠 Menu</button>
     </div>
   </div>
 </div>
 
-<footer>Zak &amp; Zayd Tic-Tac-Toe &nbsp;·&nbsp; Developed by Zakariya A.</footer>
+<div class="cf-wrap" id="cfWrap"></div>
+<div class="toast" id="toast"></div>
 
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
 <script>
-// ── Stars ──────────────────────────────────────────────────────────────────
-(function createStars(){
-  for(let i=0;i<70;i++){
-    const s=document.createElement('div');
-    s.className='star';
-    const sz=Math.random()*2.5+0.5;
-    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;opacity:${Math.random()*0.6+0.1}`;
-    document.body.appendChild(s);
-  }
-})();
-
-// ── Audio Engine ─────────────────────────────────────────────────────────────
-const AC = new (window.AudioContext || window.webkitAudioContext)();
-
-function playTone(freq, type='sine', dur=0.18, vol=0.25, delay=0){
-  const o=AC.createOscillator(), g=AC.createGain();
-  o.connect(g); g.connect(AC.destination);
-  o.type=type; o.frequency.setValueAtTime(freq, AC.currentTime+delay);
-  g.gain.setValueAtTime(vol, AC.currentTime+delay);
-  g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime+delay+dur);
-  o.start(AC.currentTime+delay);
-  o.stop(AC.currentTime+delay+dur+0.01);
+// ── Supabase Init ─────────────────────────────────────────────────────────────
+let sb = null;
+function initSupabase(){
+  if(SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL') return false;
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    return true;
+  } catch(e){ return false; }
 }
 
-function sfxX(){
-  // Bold punchy sound – two quick tones
-  playTone(300,'sawtooth',0.12,0.18);
-  playTone(180,'square',0.15,0.14,0.08);
+// ── Audio ─────────────────────────────────────────────────────────────────────
+const AC = new (window.AudioContext||window.webkitAudioContext)();
+function tone(f,t='sine',d=.18,v=.22,dl=0){
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type=t;o.frequency.setValueAtTime(f,AC.currentTime+dl);
+  g.gain.setValueAtTime(v,AC.currentTime+dl);
+  g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+dl+d);
+  o.start(AC.currentTime+dl);o.stop(AC.currentTime+dl+d+.01);
 }
+const sfxX   = ()=>{ tone(320,'sawtooth',.11,.18); tone(200,'square',.14,.14,.09); };
+const sfxO   = ()=>{ tone(540,'sine',.14,.2); tone(680,'sine',.11,.16,.09); };
+const sfxWin = ()=>[[0,.09,.18,.28,.4],[523,659,784,1047,1319]].reduce((a,_,i,ar)=>{ if(i===0)ar[0].forEach((d,j)=>tone(ar[1][j],'sine',.25,.2,d));},0);
+const sfxDraw= ()=>{ tone(400,'triangle',.18,.18);tone(320,'triangle',.2,.16,.12); };
 
-function sfxO(){
-  // Smooth bubbly sound
-  playTone(520,'sine',0.15,0.2);
-  playTone(660,'sine',0.12,0.15,0.08);
-}
+// ── State ─────────────────────────────────────────────────────────────────────
+let mode       = 'local';   // 'local' | 'cpu' | 'online'
+let gridSize   = 3;
+let board      = [];
+let curPlayer  = 'X';
+let gameOver   = false;
+let scores     = {X:0,O:0,draw:0};
+let nameX      = 'Player X';
+let nameO      = 'Player O';
+let cpuDiff    = 'easy';
+let cpuGrid    = 3;
+let onlineGrid = 3;
+let localGrid  = 3;
+let myMark     = 'X';        // for online: which mark am I?
+let roomId     = null;
+let roomSub    = null;
+let isMyTurn   = false;
 
-function sfxWin(){
-  [0,0.08,0.16,0.26,0.38].forEach((d,i)=>{
-    playTone([523,659,784,1047,1319][i],'sine',0.25,0.2,d);
-  });
-}
-
-function sfxDraw(){
-  [0,0.1,0.2].forEach((d,i)=>{
-    playTone([400,350,300][i],'triangle',0.2,0.18,d);
-  });
-}
-
-// ── Background Music ─────────────────────────────────────────────────────────
-let musicOn = true;
-let musicIntervalId = null;
-const melody = [261,294,330,349,392,440,494,523,494,440,392,349,330,294,261,0];
-let melodyIdx = 0;
-
-function playMelodyNote(){
-  if(!musicOn) return;
-  const f = melody[melodyIdx % melody.length];
-  if(f>0) playTone(f,'sine',0.35,0.06);
-  melodyIdx++;
-}
-
-function startMusic(){
-  if(musicIntervalId) return;
-  musicIntervalId = setInterval(playMelodyNote, 420);
-}
-
-function stopMusic(){
-  clearInterval(musicIntervalId);
-  musicIntervalId = null;
-}
-
-document.getElementById('musicToggle').addEventListener('click', ()=>{
-  musicOn = !musicOn;
-  document.getElementById('musicToggle').textContent = musicOn ? '🎵 Music: ON' : '🔇 Music: OFF';
-  if(musicOn) startMusic(); else stopMusic();
-  AC.resume();
-});
-
-// ── Game State ────────────────────────────────────────────────────────────────
-let gridSize = 3;
-let board = [];
-let currentPlayer = 'X';
-let gameOver = false;
-let scores = {X:0, O:0, draw:0};
-let nameX = 'Player X', nameO = 'Player O';
-
-// ── Grid Size Picker ──────────────────────────────────────────────────────────
-document.querySelectorAll('.grid-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.grid-btn').forEach(b=>b.classList.remove('selected'));
-    btn.classList.add('selected');
-    gridSize = parseInt(btn.dataset.size);
-  });
-});
-
-// ── Start Game ────────────────────────────────────────────────────────────────
-document.getElementById('startBtn').addEventListener('click', ()=>{
-  AC.resume();
-  nameX = document.getElementById('nameX').value.trim() || 'Player X';
-  nameO = document.getElementById('nameO').value.trim() || 'Player O';
-  document.getElementById('scoreNameX').textContent = nameX;
-  document.getElementById('scoreNameO').textContent = nameO;
-  scores = {X:0, O:0, draw:0};
-  updateScoreDisplay();
-  showScreen('gameScreen');
-  initGame();
-  startMusic();
-});
-
-// ── Show Screen ───────────────────────────────────────────────────────────────
-function showScreen(id){
+// ── Navigation ────────────────────────────────────────────────────────────────
+function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+function goHome(){ show('homeScreen'); }
 
-// ── Init Game ─────────────────────────────────────────────────────────────────
-function initGame(){
-  const N = gridSize;
-  board = Array(N*N).fill(null);
-  currentPlayer = 'X';
-  gameOver = false;
+function goLocalSetup(){
+  AC.resume();
+  const n=document.getElementById('playerNameInput').value.trim();
+  if(n) document.getElementById('lp1').value=n;
+  show('localSetupScreen');
+}
+function goCPUSetup(){
+  AC.resume();
+  const n=document.getElementById('playerNameInput').value.trim();
+  if(n) document.getElementById('cpuPlayerName').value=n;
+  show('cpuSetupScreen');
+}
+function goOnlineCreate(){
+  AC.resume();
+  const n=document.getElementById('playerNameInput').value.trim();
+  if(n) document.getElementById('onlineName').value=n;
+  show('onlineScreen');
+}
+
+// ── Grid toggles ──────────────────────────────────────────────────────────────
+function setLocalGrid(n,el){ localGrid=n; document.querySelectorAll('#localSetupScreen .tog').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+function setCPUGrid(n,el)  { cpuGrid=n;   document.querySelectorAll('#cpuSetupScreen .tog').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+function setOnlineGrid(n,el){ onlineGrid=n; document.querySelectorAll('#onlineScreen .tog').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+function setDiff(d,el){ cpuDiff=d; document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+
+// ── Start Local ───────────────────────────────────────────────────────────────
+function startLocal(){
+  mode='local'; gridSize=localGrid;
+  nameX=document.getElementById('lp1').value.trim()||'Player X';
+  nameO=document.getElementById('lp2').value.trim()||'Player O';
+  scores={X:0,O:0,draw:0};
+  startGame();
+}
+
+// ── Start CPU ─────────────────────────────────────────────────────────────────
+function startCPU(){
+  mode='cpu'; gridSize=cpuGrid;
+  nameX=document.getElementById('cpuPlayerName').value.trim()||'Player X';
+  nameO='🤖 CPU';
+  myMark='X';
+  scores={X:0,O:0,draw:0};
+  startGame();
+}
+
+// ── Start Game ────────────────────────────────────────────────────────────────
+function startGame(){
+  document.getElementById('onlineBadge').style.display='none';
+  document.getElementById('chipXName').textContent=nameX;
+  document.getElementById('chipOName').textContent=nameO;
+  updateScores();
+  show('gameScreen');
+  initBoard();
+}
+
+function initBoard(){
+  const N=gridSize;
+  board=Array(N*N).fill(null);
+  curPlayer='X'; gameOver=false;
   renderBoard();
   updateStatus();
-  updateActiveRow();
+  updateChips();
+  if(mode==='online') isMyTurn=(myMark==='X');
 }
 
 // ── Render Board ──────────────────────────────────────────────────────────────
 function renderBoard(){
-  const N = gridSize;
-  const boardEl = document.getElementById('board');
-  // Cell size based on grid
-  const maxW = Math.min(window.innerWidth - 280, 560);
-  const cellSz = Math.max(40, Math.floor((maxW - N*8 - 32) / N));
-  boardEl.style.gridTemplateColumns = `repeat(${N}, ${cellSz}px)`;
-  boardEl.style.gridTemplateRows    = `repeat(${N}, ${cellSz}px)`;
-  boardEl.innerHTML = '';
-  board.forEach((val, i)=>{
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.style.fontSize = `${Math.max(14, cellSz * 0.55)}px`;
-    if(val){
-      cell.innerHTML = `<span class="mark">${val==='X'?'✕':'○'}</span>`;
-      cell.classList.add('taken', val==='X'?'x-cell':'o-cell');
-    }
-    cell.addEventListener('click', ()=>handleClick(i));
-    boardEl.appendChild(cell);
+  const N=gridSize;
+  const el=document.getElementById('board');
+  const maxW=Math.min(window.innerWidth-40,440);
+  const cellSz=Math.max(52,Math.floor((maxW-N*8-32)/N));
+  el.style.gridTemplateColumns=`repeat(${N},${cellSz}px)`;
+  el.style.gridTemplateRows=`repeat(${N},${cellSz}px)`;
+  el.innerHTML='';
+  board.forEach((v,i)=>{
+    const c=document.createElement('div');
+    c.className='cell'+(v?` taken ${v==='X'?'x-cell':'o-cell'}`:'');
+    c.style.fontSize=`${Math.max(16,cellSz*.52)}px`;
+    if(v) c.innerHTML=`<span class="mark">${v==='X'?'✕':'○'}</span>`;
+    c.addEventListener('click',()=>handleClick(i));
+    el.appendChild(c);
   });
 }
 
 // ── Handle Click ──────────────────────────────────────────────────────────────
 function handleClick(i){
-  if(board[i] || gameOver) return;
+  if(board[i]||gameOver) return;
+  if(mode==='online' && !isMyTurn){ showToast("Wait for your turn!"); return; }
   AC.resume();
-  board[i] = currentPlayer;
-  currentPlayer==='X' ? sfxX() : sfxO();
+  placeMove(i, curPlayer);
+  if(mode==='online') pushMove(i);
+}
+
+function placeMove(i, player){
+  board[i]=player;
+  player==='X'?sfxX():sfxO();
   renderBoard();
-  const result = checkWinner();
+  const result=checkWinner();
   if(result){
-    gameOver = true;
+    gameOver=true;
     if(result.winner){
       markWinners(result.line);
       scores[result.winner]++;
-      updateScoreDisplay();
+      updateScores();
       sfxWin();
-      launchConfetti(result.winner);
-      setTimeout(()=>showResult(result.winner), 700);
+      confetti(result.winner);
+      setTimeout(()=>showResult(result.winner),650);
     } else {
       scores.draw++;
-      updateScoreDisplay();
+      updateScores();
       sfxDraw();
-      setTimeout(()=>showResult(null), 400);
+      setTimeout(()=>showResult(null),350);
     }
   } else {
-    currentPlayer = currentPlayer==='X'?'O':'X';
-    updateStatus();
-    updateActiveRow();
+    curPlayer=curPlayer==='X'?'O':'X';
+    updateStatus(); updateChips();
+    if(mode==='cpu' && curPlayer==='O' && !gameOver){
+      setTimeout(doCPUMove, cpuDiff==='easy'?600:cpuDiff==='medium'?400:300);
+    }
+    if(mode==='online') isMyTurn=!isMyTurn;
   }
 }
 
-// ── Check Winner ─────────────────────────────────────────────────────────────
-function checkWinner(){
-  const N = gridSize;
-  const winLen = N >= 5 ? 4 : N; // 4-in-a-row for 5×5 or 6×6
-  // Rows
-  for(let r=0;r<N;r++) for(let c=0;c<=N-winLen;c++){
-    const line=[];
-    for(let k=0;k<winLen;k++) line.push(r*N+c+k);
-    if(allSame(line)) return {winner:board[line[0]],line};
+// ── CPU AI ────────────────────────────────────────────────────────────────────
+function doCPUMove(){
+  if(gameOver) return;
+  let idx=-1;
+  if(cpuDiff==='easy'){
+    const empty=board.map((_,i)=>i).filter(i=>!board[i]);
+    idx=empty[Math.floor(Math.random()*empty.length)];
+  } else if(cpuDiff==='medium'){
+    idx=Math.random()<.5?minimax(board,'O',gridSize).idx:randomEmpty();
+    if(idx===-1) idx=randomEmpty();
+  } else {
+    idx=minimax(board,'O',gridSize).idx;
+    if(idx===-1) idx=randomEmpty();
   }
-  // Cols
-  for(let c=0;c<N;c++) for(let r=0;r<=N-winLen;r++){
-    const line=[];
-    for(let k=0;k<winLen;k++) line.push((r+k)*N+c);
-    if(allSame(line)) return {winner:board[line[0]],line};
+  if(idx!==-1) placeMove(idx,'O');
+}
+
+function randomEmpty(){
+  const e=board.map((_,i)=>i).filter(i=>!board[i]);
+  return e.length?e[Math.floor(Math.random()*e.length)]:-1;
+}
+
+function minimax(b, player, N, depth=0, alpha=-Infinity, beta=Infinity){
+  const res=checkWinnerOn(b,N);
+  if(res){
+    if(res.winner==='O') return {score:10-depth,idx:-1};
+    if(res.winner==='X') return {score:depth-10,idx:-1};
+    return {score:0,idx:-1};
   }
-  // Diag ↘
-  for(let r=0;r<=N-winLen;r++) for(let c=0;c<=N-winLen;c++){
-    const line=[];
-    for(let k=0;k<winLen;k++) line.push((r+k)*N+(c+k));
-    if(allSame(line)) return {winner:board[line[0]],line};
+  const empty=b.map((_,i)=>i).filter(i=>!b[i]);
+  if(!empty.length) return {score:0,idx:-1};
+  // Limit depth for 4x4 to keep it fast
+  if(depth>=(N===3?9:5)) return {score:0,idx:-1};
+  let best={score:player==='O'?-Infinity:Infinity,idx:-1};
+  for(const i of empty){
+    b[i]=player;
+    const child=minimax(b, player==='O'?'X':'O', N, depth+1, alpha, beta);
+    b[i]=null;
+    if(player==='O'){
+      if(child.score>best.score){best={score:child.score,idx:i};}
+      alpha=Math.max(alpha,best.score);
+    } else {
+      if(child.score<best.score){best={score:child.score,idx:i};}
+      beta=Math.min(beta,best.score);
+    }
+    if(beta<=alpha) break;
   }
-  // Diag ↙
-  for(let r=0;r<=N-winLen;r++) for(let c=winLen-1;c<N;c++){
-    const line=[];
-    for(let k=0;k<winLen;k++) line.push((r+k)*N+(c-k));
-    if(allSame(line)) return {winner:board[line[0]],line};
+  return best;
+}
+
+// ── Win Check ─────────────────────────────────────────────────────────────────
+function checkWinner(){ return checkWinnerOn(board,gridSize); }
+
+function checkWinnerOn(b,N){
+  const W=N>=4?4:3;
+  // rows
+  for(let r=0;r<N;r++) for(let c=0;c<=N-W;c++){
+    const line=Array.from({length:W},(_,k)=>r*N+c+k);
+    if(allSame(b,line)) return{winner:b[line[0]],line};
   }
-  if(board.every(c=>c)) return {winner:null,line:[]};
+  // cols
+  for(let c=0;c<N;c++) for(let r=0;r<=N-W;r++){
+    const line=Array.from({length:W},(_,k)=>(r+k)*N+c);
+    if(allSame(b,line)) return{winner:b[line[0]],line};
+  }
+  // diag ↘
+  for(let r=0;r<=N-W;r++) for(let c=0;c<=N-W;c++){
+    const line=Array.from({length:W},(_,k)=>(r+k)*N+(c+k));
+    if(allSame(b,line)) return{winner:b[line[0]],line};
+  }
+  // diag ↙
+  for(let r=0;r<=N-W;r++) for(let c=W-1;c<N;c++){
+    const line=Array.from({length:W},(_,k)=>(r+k)*N+(c-k));
+    if(allSame(b,line)) return{winner:b[line[0]],line};
+  }
+  if(b.every(v=>v)) return{winner:null,line:[]};
   return null;
 }
+function allSame(b,line){ const v=b[line[0]]; return v&&line.every(i=>b[i]===v); }
 
-function allSame(line){
-  const v=board[line[0]];
-  return v && line.every(i=>board[i]===v);
-}
-
-// ── Mark winners ─────────────────────────────────────────────────────────────
 function markWinners(line){
-  const cells = document.querySelectorAll('.cell');
-  line.forEach(i=>cells[i].classList.add('winner-cell'));
+  const cells=document.querySelectorAll('.cell');
+  line.forEach(i=>cells[i].classList.add('win-cell'));
 }
 
-// ── UI helpers ───────────────────────────────────────────────────────────────
+// ── UI Helpers ────────────────────────────────────────────────────────────────
 function updateStatus(){
-  const name = currentPlayer==='X' ? nameX : nameO;
-  const sym  = currentPlayer==='X' ? '✕' : '○';
-  document.getElementById('statusBar').textContent = `${name}'s turn  ${sym}`;
-  document.getElementById('statusBar').style.color = currentPlayer==='X' ? 'var(--x-color)' : 'var(--o-color)';
+  const name=curPlayer==='X'?nameX:nameO;
+  const sym=curPlayer==='X'?'✕':'○';
+  const pill=document.getElementById('statusPill');
+  pill.textContent=`${name}'s turn  ${sym}`;
+  pill.style.color=curPlayer==='X'?'var(--x)':'var(--o)';
+}
+function updateChips(){
+  document.getElementById('chipX').classList.toggle('active',curPlayer==='X');
+  document.getElementById('chipO').classList.toggle('active',curPlayer==='O');
+}
+function updateScores(){
+  document.getElementById('chipXScore').textContent=scores.X;
+  document.getElementById('chipOScore').textContent=scores.O;
+  document.getElementById('drawsNum').textContent=scores.draw;
 }
 
-function updateActiveRow(){
-  document.getElementById('scoreRowX').classList.toggle('active-turn', currentPlayer==='X');
-  document.getElementById('scoreRowO').classList.toggle('active-turn', currentPlayer==='O');
+function newRound(){
+  if(mode==='online'){ pushNewRound(); return; }
+  initBoard();
 }
 
-function updateScoreDisplay(){
-  document.getElementById('scoreNumX').textContent = scores.X;
-  document.getElementById('scoreNumO').textContent = scores.O;
-  document.getElementById('drawNum').textContent   = scores.draw;
-}
-
-// ── Result Modal ─────────────────────────────────────────────────────────────
+// ── Result Modal ──────────────────────────────────────────────────────────────
 function showResult(winner){
-  const overlay = document.getElementById('resultOverlay');
-  const title   = document.getElementById('modalTitle');
-  const msg     = document.getElementById('modalMsg');
-  const trophy  = document.getElementById('modalTrophy');
+  const em=document.getElementById('resEmoji');
+  const ti=document.getElementById('resTitle');
+  const ms=document.getElementById('resMsg');
   if(winner){
-    const wName = winner==='X' ? nameX : nameO;
-    const wColor = winner==='X' ? '#e63946' : '#1d7fe8';
-    trophy.textContent = '🏆';
-    title.textContent = `${wName} Wins!`;
-    title.style.color = wColor;
-    msg.textContent = `Amazing! ${wName} got ${gridSize>=5?4:gridSize} in a row!`;
+    const wName=winner==='X'?nameX:nameO;
+    em.textContent='🏆';
+    ti.textContent=`${wName} Wins!`;
+    ti.style.color=winner==='X'?'var(--x)':'var(--o)';
+    ms.textContent=`What a game! ${wName} got ${gridSize>=4?4:3} in a row!`;
   } else {
-    trophy.textContent = '🤝';
-    title.textContent = "It's a Draw!";
-    title.style.color = 'var(--gold)';
-    msg.textContent = "Great game! No one wins this round.";
+    em.textContent='🤝';
+    ti.textContent="It's a Draw!";
+    ti.style.color='var(--gold)';
+    ms.textContent='A perfectly balanced game — nobody wins this round!';
   }
-  overlay.classList.add('show');
+  document.getElementById('resultOverlay').classList.add('show');
 }
-
-document.getElementById('modalPlayAgain').addEventListener('click', ()=>{
-  document.getElementById('resultOverlay').classList.remove('show');
-  initGame();
-});
-document.getElementById('modalMenu').addEventListener('click', ()=>{
-  document.getElementById('resultOverlay').classList.remove('show');
-  stopMusic();
-  showScreen('setupScreen');
-});
-
-// ── Buttons ───────────────────────────────────────────────────────────────────
-document.getElementById('newRoundBtn').addEventListener('click', ()=>{ AC.resume(); initGame(); });
-document.getElementById('backMenuBtn').addEventListener('click', ()=>{ stopMusic(); showScreen('setupScreen'); });
+function closeResult(){ document.getElementById('resultOverlay').classList.remove('show'); }
 
 // ── Confetti ──────────────────────────────────────────────────────────────────
-function launchConfetti(winner){
-  const colors = winner==='X'
-    ? ['#e63946','#ff6b9d','#ff9f1c','#ffdd00']
-    : ['#1d7fe8','#4ecdc4','#a8dadc','#90e0ef'];
-  const wrap = document.getElementById('confettiWrap');
-  wrap.innerHTML='';
-  for(let i=0;i<80;i++){
+function confetti(winner){
+  const cols=winner==='X'?['#ff4d6d','#ff8fa3','#f8c537']:['#4cc9f0','#90e0ef','#a8dadc'];
+  const w=document.getElementById('cfWrap');
+  w.innerHTML='';
+  for(let i=0;i<70;i++){
     const p=document.createElement('div');
     p.className='cf';
-    const w=Math.random()*12+5, h=Math.random()*8+4;
-    const rot=`${Math.floor(Math.random()*720-360)}deg`;
-    p.style.cssText=`left:${Math.random()*100}%;width:${w}px;height:${h}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>0.4?'50%':'2px'};--d:${(Math.random()*2+1.2).toFixed(1)}s;--delay:${(Math.random()*0.6).toFixed(2)}s;--rot:${rot}`;
-    wrap.appendChild(p);
+    const sz=Math.random()*10+5;
+    p.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz*.6}px;background:${cols[~~(Math.random()*cols.length)]};border-radius:${Math.random()>.4?'50%':'2px'};--d:${(Math.random()*1.8+1.1).toFixed(1)}s;--dl:${(Math.random()*.5).toFixed(2)}s;--r:${~~(Math.random()*720-360)}deg`;
+    w.appendChild(p);
   }
-  setTimeout(()=>wrap.innerHTML='', 4000);
+  setTimeout(()=>w.innerHTML='',4000);
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ════════════════════════════════════════════════════════════
+// ── ONLINE MULTIPLAYER ──────────────────────────────────────
+// ════════════════════════════════════════════════════════════
+function showJoinPanel(){
+  const p=document.getElementById('joinPanel');
+  p.style.display=p.style.display==='none'?'block':'none';
+}
+
+function genCode(){
+  return Math.random().toString(36).substring(2,8).toUpperCase();
+}
+
+async function createRoom(){
+  if(!initSupabase()){ showOnlineErr(); return; }
+  const myName=document.getElementById('onlineName').value.trim()||'Player X';
+  nameX=myName; nameO='Waiting…'; myMark='X'; gridSize=onlineGrid;
+  const code=genCode();
+  roomId=code;
+  const payload={
+    id:code, board:JSON.stringify(Array(gridSize*gridSize).fill(null)),
+    current_player:'X', player_x:myName, player_o:null,
+    grid_size:gridSize, status:'waiting', winner:null
+  };
+  const {error}=await sb.from('games').insert(payload);
+  if(error){ showOnlineErr(); return; }
+  document.getElementById('displayCode').textContent=code;
+  document.getElementById('badgeCode').textContent=code;
+  document.getElementById('waitingCard').style.display='block';
+  document.getElementById('onlineErr').classList.remove('show');
+  generateQR(code);
+  subscribeToRoom(code,'X');
+}
+
+async function joinRoom(){
+  if(!initSupabase()){ showOnlineErr(); return; }
+  const code=document.getElementById('joinCodeInput').value.trim().toUpperCase();
+  if(code.length<4){ showToast('Enter the room code first!'); return; }
+  const myName=document.getElementById('onlineName').value.trim()||'Player O';
+  const {data,error}=await sb.from('games').select('*').eq('id',code).single();
+  if(error||!data){ showToast('Room not found! Check the code.'); return; }
+  if(data.status!=='waiting'){ showToast('This room is already full!'); return; }
+  nameX=data.player_x; nameO=myName; myMark='O';
+  gridSize=data.grid_size; roomId=code;
+  await sb.from('games').update({player_o:myName, status:'playing'}).eq('id',code);
+  setupOnlineGame(data);
+  subscribeToRoom(code,'O');
+}
+
+function setupOnlineGame(data){
+  board=JSON.parse(data.board);
+  gridSize=data.grid_size;
+  curPlayer=data.current_player;
+  isMyTurn=(myMark===curPlayer);
+  nameX=data.player_x; nameO=data.player_o||nameO;
+  document.getElementById('chipXName').textContent=nameX;
+  document.getElementById('chipOName').textContent=nameO;
+  document.getElementById('onlineBadge').style.display='flex';
+  document.getElementById('badgeCode').textContent=roomId;
+  scores={X:0,O:0,draw:0};
+  updateScores();
+  show('gameScreen');
+  renderBoard(); updateStatus(); updateChips();
+}
+
+function subscribeToRoom(code, myRole){
+  if(roomSub){ sb.removeChannel(roomSub); roomSub=null; }
+  roomSub=sb.channel(`game_${code}`)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'games',filter:`id=eq.${code}`}, payload=>{
+      const d=payload.new;
+      if(d.status==='playing' && myRole==='X'){
+        // Opponent joined!
+        nameO=d.player_o;
+        document.getElementById('waitingCard').style.display='none';
+        setupOnlineGame(d);
+      }
+      if(d.status==='move'){
+        board=JSON.parse(d.board);
+        curPlayer=d.current_player;
+        isMyTurn=(myMark===curPlayer);
+        (curPlayer==='X'?sfxO:sfxX)(); // sound for move just made by other player
+        renderBoard(); updateStatus(); updateChips();
+        const result=checkWinner();
+        if(result){
+          gameOver=true;
+          if(result.winner){
+            markWinners(result.line); scores[result.winner]++;
+            updateScores(); sfxWin(); confetti(result.winner);
+            setTimeout(()=>showResult(result.winner),650);
+          } else {
+            scores.draw++; updateScores(); sfxDraw();
+            setTimeout(()=>showResult(null),350);
+          }
+        }
+      }
+      if(d.status==='newround'){
+        board=JSON.parse(d.board);
+        curPlayer=d.current_player; gameOver=false;
+        isMyTurn=(myMark===curPlayer);
+        renderBoard(); updateStatus(); updateChips();
+        closeResult();
+      }
+    })
+    .subscribe();
+}
+
+async function pushMove(idx){
+  if(!sb||!roomId) return;
+  const newBoard=JSON.stringify(board);
+  const nextPlayer=curPlayer==='X'?'O':'X'; // already switched in placeMove? No — placeMove switches after. Let's read current state
+  // Actually curPlayer was switched INSIDE placeMove already. So curPlayer is now the next player
+  await sb.from('games').update({
+    board:newBoard, current_player:curPlayer, status:'move'
+  }).eq('id',roomId);
+}
+
+async function pushNewRound(){
+  if(!sb||!roomId) return;
+  const empty=Array(gridSize*gridSize).fill(null);
+  await sb.from('games').update({
+    board:JSON.stringify(empty), current_player:'X', status:'newround', winner:null
+  }).eq('id',roomId);
+  board=empty; curPlayer='X'; gameOver=false;
+  isMyTurn=(myMark==='X');
+  renderBoard(); updateStatus(); updateChips(); closeResult();
+}
+
+function cancelOnline(){
+  if(roomSub){ sb&&sb.removeChannel(roomSub); roomSub=null; }
+  roomId=null;
+  document.getElementById('waitingCard').style.display='none';
+  document.getElementById('joinPanel').style.display='none';
+  document.getElementById('joinCodeInput').value='';
+}
+
+function showOnlineErr(){
+  document.getElementById('onlineErr').classList.add('show');
+}
+
+// Run on page load
+window.addEventListener('DOMContentLoaded', checkAutoJoin);
+
+function buildShareURL(code){
+  // Works whether hosted on a server or opened as a local file
+  const base = window.location.href.split('?')[0].split('#')[0];
+  return `${base}?join=${code}`;
+}
+
+function generateQR(code){
+  const url = buildShareURL(code);
+  // Update share link display
+  document.getElementById('shareLinkText').textContent = url;
+  // Clear & regenerate QR
+  const container = document.getElementById('qrCanvas');
+  container.innerHTML = '';
+  new QRCode(container, {
+    text: url,
+    width: 160,
+    height: 160,
+    colorDark: '#0d0d14',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
+function copyCode(){
+  const code=document.getElementById('displayCode').textContent;
+  navigator.clipboard.writeText(code).then(()=>showToast('Code copied! 📋'));
+}
+
+function copyLink(){
+  const code=document.getElementById('displayCode').textContent;
+  const url=buildShareURL(code);
+  navigator.clipboard.writeText(url).then(()=>showToast('Link copied! 🔗'));
+}
+
+// Auto-join if URL has ?join=CODE
+function checkAutoJoin(){
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('join');
+  if(code){
+    document.getElementById('joinCodeInput').value = code.toUpperCase();
+    goOnlineCreate();
+    document.getElementById('joinPanel').style.display = 'block';
+    showToast(`Room code ${code} pre-filled! Enter your name & join.`);
+  }
 }
 </script>
 </body>
