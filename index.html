@@ -435,7 +435,7 @@ body::before {
   <!-- HEADER -->
   <header class="header">
     <div class="logo">Tic‑Tac‑Toe</div>
-    <div class="logo-sub">Developed by Zakariya A.</div>
+    <div class="logo-sub">Zak's Edition</div>
   </header>
 
   <!-- ══ HOME SCREEN ══ -->
@@ -591,8 +591,8 @@ body::before {
     <h2 id="resTitle">Winner!</h2>
     <p id="resMsg"></p>
     <div class="credit">
-      🎉 Congratulations!! You just finished playing<br>
-      <strong>Tic-Tac-Toe</strong> — Developed by Zakariya A.
+      🎉 Thanks for playing <strong>Zak's Tic-Tac-Toe</strong>!<br>
+      Hope you had fun — come back and play again! 🕹️
     </div>
     <div class="modal-btns">
       <button class="btn btn-primary btn-sm" onclick="closeResult();newRound()">▶ Play Again</button>
@@ -972,9 +972,12 @@ async function joinRoom(){
   if(data.status!=='waiting'){ showToast('This room is already full!'); return; }
   nameX=data.player_x; nameO=myName; myMark='O';
   gridSize=data.grid_size; roomId=code;
-  await sb.from('games').update({player_o:myName, status:'playing'}).eq('id',code);
-  setupOnlineGame(data);
+  // Subscribe BEFORE pushing update so we never miss events
   subscribeToRoom(code,'O');
+  // Push update — triggers Player 1's realtime listener
+  await sb.from('games').update({player_o:myName, status:'playing'}).eq('id',code);
+  // Setup game locally with merged fresh data
+  setupOnlineGame({...data, player_o:myName, status:'playing'});
 }
 
 function setupOnlineGame(data){
@@ -995,34 +998,50 @@ function setupOnlineGame(data){
 
 function subscribeToRoom(code, myRole){
   if(roomSub){ sb.removeChannel(roomSub); roomSub=null; }
+
   roomSub=sb.channel(`game_${code}`)
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'games',filter:`id=eq.${code}`}, payload=>{
       const d=payload.new;
+
+      // Player 1 sees opponent joined
+      if((d.status==='playing' || d.status==='move' || d.status==='newround') && myRole==='X' && document.getElementById('waitingCard').style.display!=='none'){
+        nameO=d.player_o;
+        document.getElementById('waitingCard').style.display='none';
+        setupOnlineGame(d);
+        return;
+      }
+
       if(d.status==='playing' && myRole==='X'){
-        // Opponent joined!
         nameO=d.player_o;
         document.getElementById('waitingCard').style.display='none';
         setupOnlineGame(d);
       }
+
       if(d.status==='move'){
-        board=JSON.parse(d.board);
-        curPlayer=d.current_player;
-        isMyTurn=(myMark===curPlayer);
-        (curPlayer==='X'?sfxO:sfxX)(); // sound for move just made by other player
-        renderBoard(); updateStatus(); updateChips();
-        const result=checkWinner();
-        if(result){
-          gameOver=true;
-          if(result.winner){
-            markWinners(result.line); scores[result.winner]++;
-            updateScores(); sfxWin(); confetti(result.winner);
-            setTimeout(()=>showResult(result.winner),650);
-          } else {
-            scores.draw++; updateScores(); sfxDraw();
-            setTimeout(()=>showResult(null),350);
+        // Only process opponent's move (our own moves we already applied locally)
+        const incomingPlayer = d.current_player; // this is now whose turn it IS (after the move)
+        if(incomingPlayer === myMark){
+          // The other player just moved, now it's our turn
+          board=JSON.parse(d.board);
+          curPlayer=d.current_player;
+          isMyTurn=true;
+          myMark==='X' ? sfxO() : sfxX();
+          renderBoard(); updateStatus(); updateChips();
+          const result=checkWinner();
+          if(result){
+            gameOver=true;
+            if(result.winner){
+              markWinners(result.line); scores[result.winner]++;
+              updateScores(); sfxWin(); confetti(result.winner);
+              setTimeout(()=>showResult(result.winner),650);
+            } else {
+              scores.draw++; updateScores(); sfxDraw();
+              setTimeout(()=>showResult(null),350);
+            }
           }
         }
       }
+
       if(d.status==='newround'){
         board=JSON.parse(d.board);
         curPlayer=d.current_player; gameOver=false;
@@ -1031,16 +1050,26 @@ function subscribeToRoom(code, myRole){
         closeResult();
       }
     })
-    .subscribe();
+    .subscribe(async (status)=>{
+      // Once subscribed, if we're Player 1 still waiting, poll once in case
+      // the realtime event fired before our subscription was ready
+      if(status === 'SUBSCRIBED' && myRole === 'X'){
+        const {data} = await sb.from('games').select('*').eq('id',code).single();
+        if(data && data.status !== 'waiting' && document.getElementById('waitingCard').style.display !== 'none'){
+          nameO = data.player_o;
+          document.getElementById('waitingCard').style.display='none';
+          setupOnlineGame(data);
+        }
+      }
+    });
 }
 
 async function pushMove(idx){
   if(!sb||!roomId) return;
-  const newBoard=JSON.stringify(board);
-  const nextPlayer=curPlayer==='X'?'O':'X'; // already switched in placeMove? No — placeMove switches after. Let's read current state
-  // Actually curPlayer was switched INSIDE placeMove already. So curPlayer is now the next player
+  // At this point, placeMove() has already switched curPlayer to the next player
+  // So current_player in DB = who should move next = the opponent
   await sb.from('games').update({
-    board:newBoard, current_player:curPlayer, status:'move'
+    board:JSON.stringify(board), current_player:curPlayer, status:'move'
   }).eq('id',roomId);
 }
 
